@@ -1,0 +1,247 @@
+{
+    "datagram.address" : "0.0.0.0",
+    "datagram.port" : 8082,
+    "eventbus.messages.delay": 4000,
+    "eventbus.subscription.idle.lifespan": 300000,
+    "http.server.address": "0.0.0.0",
+    "http.server.port": 8081,
+    "http.server.eventbus.path": "eventbus",
+    "http.server.akHomeAutomationServer.path": "tichhome",
+    "www.path": "src/main/resources/webroot",
+	"backups.path": "backups",
+	"nodes.file.path": "/home/pi/tichhome/config/nodes.json",
+	"sensors.file.path": "/home/pi/tichhome/config/sensors.json",
+    "web.server.address":"http://88.88.88.88/tichhome/",
+	"satellite.server.addresses":["http://88.88.88.88/tichhome/"],
+	"processes.files.path": "/home/pi/tichhome/processes/",
+	"logs.folder.path": "/home/pi/tichhome/logs/",
+	"delay.files.path":"/home/pi/tichhome/delayfiles/",
+	"regularaction.files.path":"/home/pi/tichhome/regularactionfiles/",
+	"sensor.settings.files.path":"/home/pi/tichhome/sensorsettingsfiles/",
+	"code.send.path":"/home/pi/tichhome/RadioDevices/codesend",
+	"conrad.code.send.path":"/home/pi/tichhome/RadioDevices/codesendConrad",
+	"sensorAlarmMail":{  
+		"enableMailingOnAlarm":false,
+		"fromaddr":"------@gmail.com",
+		"toaddr":"------@gmail.com",
+		"password":"------",
+		"smtpServerAddress":"smtp.gmail.com",
+		"smtpServerPort":587
+	},
+	"save.daily.logs.to.file": true,
+	"saveDailySensorLogsToFile": true,
+	"canChangeAlarmSettings": true,
+	"logsDropdownFilter": [
+		{
+			"name":"actions",
+			"values":[{"id":1, "name":"", "searchQuery":""},{"id":2, "name":"Scheduled", "searchQuery":"source=Scheduled"},{"id":3, "name":"Alarm_Sensor", "searchQuery":"source=Alarm_Sensor"},{"id":4, "name":"Sensor", "searchQuery":"source=Sensor"},{"id":5, "name":"Web", "searchQuery":"source=Web"}]
+		}
+	],
+	"translations":[ 
+		{  
+			"code":"search",
+			"description":"Search"
+		},
+		{  
+			"code":"alarm_settings",
+			"description":"Alarm Settings"
+		},
+		{  
+			"code":"alarm_devices_trigger",
+			"description":"Trigger devices"
+		},
+		{  
+			"code":"availability_not_checked",
+			"description":"Check availability"
+		},
+		{  
+			"code":"availability_available",
+			"description":"Available"
+		},
+		{  
+			"code":"availability_unavailable",
+			"description":"Unavailable"
+		},
+		{  
+			"code":"homepage",
+			"description":"AKHomeAutomation"
+		},
+		{  
+			"code":"advanced",
+			"description":"Advanced"
+		},
+		{  
+			"code":"admin",
+			"description":"Admin"
+		},
+		{  
+			"code":"sensors",
+			"description":"Sensors"
+		},
+		{  
+			"code":"items",
+			"description":"Items"
+		},
+		{  
+			"code":"close",
+			"description":"Close"
+		},
+		{  
+			"code":"careful",
+			"description":"Careful!"
+		},
+		{  
+			"code":"enable",
+			"description":"Enable"
+		},
+		{  
+			"code":"disable",
+			"description":"Disable"
+		},
+		{  
+			"code":"reset",
+			"description":"Reset"
+		},
+		{  
+			"code":"save",
+			"description":"Save"
+		},
+		{  
+			"code":"delete",
+			"description":"Delete"
+		},
+		{  
+			"code":"delete_confirm",
+			"description":"Confirm delete"
+		},
+		{  
+			"code":"day1",
+			"description":"Mo"
+		},
+		{  
+			"code":"day2",
+			"description":"Tu"
+		},
+		{  
+			"code":"day3",
+			"description":"We"
+		},
+		{  
+			"code":"day4",
+			"description":"Th"
+		},
+		{  
+			"code":"day5",
+			"description":"Fr"
+		},
+		{  
+			"code":"day6",
+			"description":"Sa"
+		},
+		{  
+			"code":"day7",
+			"description":"Su"
+		},
+		{  
+			"code":"logs_actions",
+			"description":"Action Logs"
+		},
+		{  
+			"code":"logs_sensors",
+			"description":"Sensor Logs"
+		},
+		{  
+			"code":"logs_exceptions",
+			"description":"Exception Logs"
+		},
+		{  
+			"code":"device",
+			"description":"Device"
+		},
+		{  
+			"code":"delay",
+			"description":"Delay"
+		},
+		{  
+			"code":"disable_at",
+			"description":"disable at"
+		},
+		{  
+			"code":"rebound",
+			"description":"Rebound"
+		},
+		{  
+			"code":"dependencyMethod",
+			"description":"Dependency method"
+		},
+		{  
+			"code":"dependencyOperation",
+			"description":"Operation"
+		},
+		{  
+			"code":"dependencyValue",
+			"description":"Value"
+		},
+		{  
+			"code":"default_delay",
+			"description":"Default delay"
+		},
+		{  
+			"code":"no_delay",
+			"description":"No delay"
+		},
+		{"code":"itemAddNewItem","description":"Add new item"},
+		{"code":"itemAddNew","description":"Add new"},
+		{"code":"itemName","description":"Name"},
+		{"code":"itemNameHelp","description":"Unique name of item. Identifier."},
+		{"code":"itemRandom","description":"Random"},
+		{"code":"itemEnabled","description":"Enabled"},
+		{"code":"itemEnabledHelp","description":"Defines if item is enabled."},
+		{"code":"itemHotWord","description":"Hotword"},
+		{"code":"itemHotWordHelp","description":"Spoken word for this item when using Google Voice kit"},
+		{"code":"itemImage","description":"Image"},
+		{"code":"itemImageHelp","description":"Image for item"},
+		{"code":"itemIcon","description":"Icon"},
+		{"code":"itemIconHelp","description":"Icon (from Font Awesome)"},
+		{"code":"itemCategory","description":"Category"},
+		{"code":"itemCategoryHelp","description":"On which tab item would be displayed"},
+		{"code":"itemHeader","description":"Header"},
+		{"code":"itemHeaderHelp","description":"Header of the item"},
+		{"code":"itemRegularActions","description":"Regular Actions"},
+		{"code":"itemRegularActionsHelp","description":"Defines if scheduled actions can be used for this item"},
+		{"code":"itemSendOption","description":"Send Option"},
+		{"code":"itemSendOptionHelp","description":"Defines what type of sending is used for this item"},
+		{"code":"itemCodeOn","description":"Code On"},
+		{"code":"itemCodeOnHelp","description":"Enabling queries for this item"},
+		{"code":"itemCodeOff","description":"Code Off"},
+		{"code":"itemCodeOffHelp","description":"Disabling query for this item"},
+		{"code":"itemDelay","description":"Delay"},
+		{"code":"itemDelayHelp","description":"Defines time in seconds after which this item will auto turn off"},
+		{"code":"itemEnableOn","description":"Display 'Enable' Button"},
+		{"code":"itemEnableOnHelp","description":"Defines if 'Enable' button will be displayed"},
+		{"code":"itemQuestionOn","description":"Question on Enable"},
+		{"code":"itemQuestionOnHelp","description":"Confirm question when 'Enable' button is clicked"},
+		{"code":"itemEnableOff","description":"Display 'Disable' Button"},
+		{"code":"itemEnableOffHelp","description":"Defines if 'Disable' button will be displayed"},
+		{"code":"itemQuestionOff","description":"Question on Disable"},
+		{"code":"itemQuestionOffHelp","description":"Confirm question when 'Disable' button is clicked"},
+		{"code":"itemDeviceIDs","description":"Devices"},
+		{"code":"itemDeviceIDsHelp","description":"If chosen this item would be group item sending Enable or Disable signals to selected items"},
+		{"code":"itemCodeDev","description":"Comments"},
+		{"code":"itemCodeDevHelp","description":"Just some internal comment for this item"},
+		{"code":"itemAddress","description":"Address"},
+		{"code":"itemAddressHelp","description":"Address for web type device. Contains mail url base while 'code on' and 'code odd' would contain url arguments"},
+		{"code":"itemReorder","description":"Reorder Item"},
+		{"code":"itemReorderHelp","description":"Change display order of item"},
+		{"code":"itemReorderFirst","description":"First"},
+		{"code":"itemReorderLast","description":"Last"},
+		{"code":"itemReorderAfter","description":"After "},
+		{"code":"sendOption_0","description":"Radio Item 1"},
+		{"code":"sendOption_1","description":"Radio Item 2"},
+		{"code":"sendOption_2","description":"Web Item"},
+		{"code":"sendOption_3","description":"Mac Address Item"},
+		{"code":"sendOption_4","description":"Shell Item"},
+		{"code":"sendOption_5","description":"Group Item"},
+		{"code":"htaccessWarning","description":"If someone except for you would be using web UI of AKHomeAutomation system then security measures should be implemented in Server.isSecured()."}
+	]
+}

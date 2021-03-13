@@ -1,0 +1,36 @@
+testing commands
+
+sudo apt update
+sudo apt install openjdk-8-jdk
+
+./gradlew shadowJar
+
+sudo rm -f /home/pi/Development/java/current-java
+sudo ln -s /home/pi/Development/java/jdk1.7.0_80 /home/pi/Development/java/current-java
+sudo ln -s /home/pi/Development/java/jdk1.8.0_191 /home/pi/Development/java/current-java
+
+
+scp build/libs/tichhome-1.0-SNAPSHOT-fat.jar pi@192.168.0.10:/home/pi/wylaczniki
+
+scp -r ~/Ebi24/CodeBase/tichhome/src/main/resources/webroot/* pi@192.168.0.10:/home/pi/wylaczniki/webroot
+
+java -jar /home/pi/wylaczniki/tichhome-1.0-SNAPSHOT-fat.jar --conf /home/pi/wylaczniki/config/settings.json
+
+
+
+
+scp build/libs/tichhome-1.0-SNAPSHOT-fat.jar pi@192.168.0.10:/home/pi/
+scp build/libs/tichhome-1.0-SNAPSHOT-fat.jar pi@192.168.0.10:/home/pi/test
+
+scp -r ~/Ebi24/CodeBase/tichhome/src/main/resources/webroot/* pi@192.168.0.10:/home/pi/test/webroot
+
+java -jar healthMonitoringServer-1.0-SNAPSHOT-fat.jar --conf /home/pi/test/conf/healthMonitoringServer-conf.json
+
+java -jar /home/pi/wylaczniki/tichhome-1.0-SNAPSHOT-fat.jar --conf /home/pi/wylaczniki/config/settings.json
+
+/home/pi/wylaczniki/processes/./run_radio_switch.py /home/pi/wylaczniki/RadioDevices/codesend 11111111
+
+codesend 11111111
+
+
+
