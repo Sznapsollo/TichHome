@@ -291,7 +291,7 @@ def checkUpdatesSensors():
 
 	helper.logMessage("checkUpdatesSensors")
 	
-	path = helper.settings.data["sensor.settings.files.path]
+	path = helper.settings.data["sensor.settings.files.path"]
 	
 	sensorIDsFromFiles = []
 

@@ -31,7 +31,7 @@ mainClassName = 'io.vertx.core.Launcher'
 def mainVerticleName = 'com.ak.Server' //'io.vertx.starter.MainVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
-def configFileName = 'config/settings.json'
+def configFileName = 'testFolders/config/settings.json'
 
 // In this section you declare the dependencies for your production and test code
 dependencies {

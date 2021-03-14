@@ -32,5 +32,8 @@ java -jar /home/pi/tichhome/tichhome-1.0-SNAPSHOT-fat.jar --conf /home/pi/tichho
 
 codesend 11111111
 
+sudo nano /etc/rc.local
+python /home/pi/tichhome/processes/check_sensors.py
+
 
 

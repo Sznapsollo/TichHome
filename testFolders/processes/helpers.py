@@ -47,7 +47,7 @@ class ItemChecker(object):
 class SensorChecker(object):
 
 	def __init__(self):
-		self.nodesFile = open(os.path.join(os.path.dirname(__file__),os.pardir,os.pardir,'configs','sensors.json'))
+		self.nodesFile = open(os.path.join(os.path.dirname(__file__),os.pardir,'config','sensors.json'))
 		self.lists = json.load(self.nodesFile)
 
 	def checkSensor(self, id):
