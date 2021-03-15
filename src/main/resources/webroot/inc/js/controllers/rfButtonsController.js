@@ -123,7 +123,7 @@
 		
 			setDefaultDelay(parseInt($scope.delay));
 			checkData();
-			
+
 			// checkInterval(timerCheckData, checkData, 120);
 			checkInterval(timerCountDownDelay, countDownDelay, 1);
 
@@ -163,6 +163,20 @@
 					}
 					else {
 						$scope.disableDate = null;
+					}
+
+					if($scope.itemType == 'Web') {
+						// for webitems that ha$timeout.cancel(timerCheckData);
+						if($scope.data !== undefined && $scope.data.enabled != null) {
+							if(!timerCheckData) {
+								checkInterval(timerCheckData, checkData, 120);
+							}
+						} else {
+							if(timerCheckData) {
+								$timeout.cancel(timerCheckData);
+								timerCheckData = null;
+							}
+						}
 					}
 				},
 				function(response) {

@@ -149,12 +149,12 @@ class Server extends AbstractVerticle {
 			staticPageHandler.setAllowRootFileSystemAccess(true)
 			staticPageHandler.setWebRoot(settingsService.wwwPath)
 		}
-		router.route("/${settingsService.akHomeAutomationServerPath}/*").handler(staticPageHandler)
+		router.route("/${settingsService.serverRootPath}/*").handler(staticPageHandler)
 	}
 
 	private void prepareSearchKeyWarningsRoute() {
 		// curl -i -k -X POST  --header  "Content-Type: application/json"  --data '{"searchCriteria":{"text":"SZUKANA FRAZA"}}' http://0.0.0.0:8081/akHomeAutomation/searchKeyWarnings
-		def searchKeyWarningsPath = "/${settingsService.akHomeAutomationServerPath}/searchKeyWarnings"
+		def searchKeyWarningsPath = "/${settingsService.serverRootPath}/searchKeyWarnings"
 		router.route(searchKeyWarningsPath).handler(BodyHandler.create());
 		router.route(searchKeyWarningsPath).handler({ routingContext ->
 			def incomingData = routingContext.getBodyAsJson()
@@ -179,10 +179,11 @@ class Server extends AbstractVerticle {
 
 	private void prepareActionsRoute() {
 		// curl -i -k -X POST  --header  "Content-Type: application/json"  --data '{"type":"backup"}' http://0.0.0.0:8081/akHomeAutomation/actions
-		def actionsPath = "/${settingsService.akHomeAutomationServerPath}/actions"
+		def actionsPath = "/${settingsService.serverRootPath}/actions"
 		// router.route(actionsPath).handler(TimeoutHandler.create(3000)); // 3 seconds
 		router.route(actionsPath).handler(BodyHandler.create());
 		router.route(actionsPath).handler({ routingContext ->
+			localLogger "Got actions signal"
 			def result = [status: 'OK', message: null]
 
 			def incomingData = routingContext.getBodyAsJson()
@@ -192,7 +193,7 @@ class Server extends AbstractVerticle {
 				incomingData = incomingData as Map
 			}
 
-
+			localLogger "Got actions body ${incomingData}"
 			// vertx.executeBlocking({ promise ->
 				
 			// 	promise.complete(result)
@@ -406,7 +407,8 @@ class Server extends AbstractVerticle {
 						enableOn: item.getProp('enableOn'), 
 						enableOff: item.getProp('enableOff'), 
 						regularActions: item.getProp('regularActions'), 
-						subtype: "I", 
+						itemType: (item instanceof ItemCheckerService.WebItem) ? 'Web' : null,
+						itemSubType: "I", 
 						enabled: item.getProp('enabled')
 					]
 				}
@@ -427,7 +429,7 @@ class Server extends AbstractVerticle {
 						enableOn: item.getProp('enableOn'), 
 						enableOff: item.getProp('enableOff'), 
 						regularActions: item.getProp('regularActions'), 
-						subtype: ((item instanceof ItemCheckerService.MacItem) ? "M" : "G"), 
+						itemSubType: ((item instanceof ItemCheckerService.MacItem) ? "M" : "G"), 
 						enabled: item.getProp('enabled'),
 						relatedItems: relatedItems
 					]
@@ -732,7 +734,7 @@ class Server extends AbstractVerticle {
 			def sensorJson = jsonObj.toString()
 			helperService.writeFile(settingsService.sensorSettingsFilesPath, fileName, sensorJson)
 		} else if(onDevices) {
-			item.onDevices = onDevices
+			item.on = onDevices
 			JsonObject jsonObj = new JsonObject(item);
 			def sensorJson = jsonObj.toString()
 			helperService.writeFile(settingsService.sensorSettingsFilesPath, fileName, sensorJson)

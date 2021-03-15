@@ -21,6 +21,7 @@ class SignalSenderService {
 	private def codeSendPath
 	private def conradCodeSendPath
 	private def saveDailyLogsToFile
+	private def saveDailySensorLogsToFile
 	private def webServerAddress
 	private def satelliteServerAddresses
 	private def logsFolderPath
@@ -40,6 +41,7 @@ class SignalSenderService {
 		codeSendPath = settingsServiceRef.codeSendPath
 		conradCodeSendPath = settingsServiceRef.conradCodeSendPath
 		saveDailyLogsToFile = settingsServiceRef.saveDailyLogsToFile
+		saveDailySensorLogsToFile = settingsServiceRef.saveDailySensorLogsToFile
 		webServerAddress = settingsServiceRef.webServerAddress
 		satelliteServerAddresses = settingsServiceRef.satelliteServerAddresses
 		logsFolderPath = settingsServiceRef.logsFolderPath
@@ -52,6 +54,7 @@ class SignalSenderService {
 
 	def toggleAction(def incomingData) {
 		def returnData = [returnData: [:], notifyIds: []]
+		def shouldLogToggleAction = true
 		localLogger 'toggleAction'
 		localLogger incomingData
 
@@ -73,6 +76,20 @@ class SignalSenderService {
 
 		itemToProcess.processingStatus = outletStatus;
 		itemToProcess.processingSource = outletSource ?: "-";
+
+		if(outletStatus == "on" && outletSource == "Sensor") {
+			def scheduledActionKey = toString('delayProcess_' + itemToProcess.getProp('name'))
+			if(scheduledActions[scheduledActionKey] != null) {
+				def timerData = scheduledActions[scheduledActionKey]
+				if (timerData.timerId != null) {
+					// there is pending delay process for this item so its ON
+					localLogger "Detected Sensor ON signal for device ${outletLight}. Switching to offd."
+					outletStatus = "offd"
+					shouldLogToggleAction = false
+				}
+			}
+		}
+
 		if(outletStatus == "on") {
 			if(itemToProcess instanceof ItemCheckerService.GroupItem) {
 				itemToProcess.getProp('itemIDs')?.each { code ->
@@ -84,17 +101,23 @@ class SignalSenderService {
 					subItemToProcess.processingStatus = outletStatus;
 					subItemToProcess.processingSource = outletSource ?: "-";
 					enableItem(subItemToProcess, outletDelayed);
-					logToggleAction(code, outletDelayed, outletStatus, outletSource)
+					if(shouldLogToggleAction) {
+						logToggleAction(code, outletDelayed, outletStatus, outletSource)
+					}
 					Thread.sleep(1000);
 				}
 			}
 			else if(itemToProcess instanceof ItemCheckerService.IntItem) {
 				enableItem(itemToProcess, outletDelayed);
-				logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				if(shouldLogToggleAction) {
+					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				}
 			}
 			else if(itemToProcess instanceof ItemCheckerService.MacItem) {
 				turnComputerOn(itemToProcess.CodeOn()); 
-				logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				if(shouldLogToggleAction) {
+					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				}
 			}
 		}
 		else if (outletStatus == "off") {
@@ -108,19 +131,25 @@ class SignalSenderService {
 					subItemToProcess.processingStatus = outletStatus;
 					subItemToProcess.processingSource = outletSource ?: "-";
 					disableItem(subItemToProcess);
-					logToggleAction(code, outletDelayed, outletStatus, outletSource)
+					if(shouldLogToggleAction) {
+						logToggleAction(code, outletDelayed, outletStatus, outletSource)
+					}
 					Thread.sleep(1000);
 				}
 			}
 			else if(itemToProcess instanceof ItemCheckerService.IntItem) {
 				disableItem(itemToProcess);
-				logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				if(shouldLogToggleAction) {
+					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				}
 			}
 		}
 		else if(outletStatus == "offd") {
 			if(itemToProcess instanceof ItemCheckerService.IntItem) {
 				delayedDisableItem(itemToProcess, outletDelayed);
-				logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				if(shouldLogToggleAction) {
+					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+				}
 			}
 		}
 
@@ -133,6 +162,14 @@ class SignalSenderService {
 			def logBody = toString("${logLineDateFormat.format(currDate)}: device ${outletLight}, delay=${outletDelayed}, status=${outletStatus}, source=${outletSource}")
 			def logsFileName = "actions_${logFileNameDateFormat.format(currDate)}.log"
 			def actionsLogFolderPath = toString("${logsFolderPath}/actions/")
+			helperService.appendFile(actionsLogFolderPath, logsFileName, logBody)
+		}
+
+		if(saveDailySensorLogsToFile && outletStatus == "on" && outletSource == "Sensor") {
+			def currDate = new Date()
+			def logBody = toString("${logLineDateFormat.format(currDate)}: device ${outletLight}, delay=${outletDelayed}, status=${outletStatus}, source=${outletSource}")
+			def logsFileName = "sensors_${logFileNameDateFormat.format(currDate)}.log"
+			def actionsLogFolderPath = toString("${logsFolderPath}/sensors/")
 			helperService.appendFile(actionsLogFolderPath, logsFileName, logBody)
 		}
 	}
@@ -195,6 +232,7 @@ class SignalSenderService {
 			if (timerData.timerId != null) {
 				// localLogger (('Canceling existing scheduledAction timer for key ' << scheduledActionKey).toString())
 				vertxReference.cancelTimer(timerData.timerId)   
+				scheduledActions[scheduledActionKey] = null
 			}
 		}
 		deleteDelayFile(item.getProp('name'));
@@ -207,7 +245,7 @@ class SignalSenderService {
 			return
 		}
 
-		def notifySatellites = item.getProp('notifySatellites') ?: true;
+		def notifySatellites = item.getProp('notifySatellites') != null ? item.getProp('notifySatellites') : true;
 		if(notifySatellites) {
 			def data = [
 				type: 'toggle',
@@ -270,14 +308,6 @@ class SignalSenderService {
 
 		def scheduledActionKey = toString('delayProcess_' + item.getProp('name'))
 
-		if(scheduledActions[scheduledActionKey] != null) {
-			def timerData = scheduledActions[scheduledActionKey]
-			if (timerData.timerId != null) {
-				// localLogger (('Canceling existing scheduledAction timer for key ' << scheduledActionKey).toString())
-				vertxReference.cancelTimer(timerData.timerId)   
-			}
-		}
-
 		localLogger 'Setup new timer' << seconds
 		scheduledActions[scheduledActionKey] = [
 			timerId: (
@@ -287,18 +317,13 @@ class SignalSenderService {
 						outletId: item.getProp('name'),
 						outletStatus: action,
 						outletDelayed: 0,
-						outletSource: item.processingSource
+						outletSource: item.processingSource + '(AUTO)'
 					])
 				})
 			)
 		]
 
-		// def delayedActionPath = (("${processesFilesPath}./delayed_action.py ").toString());
-
 		saveDelayFile(item, seconds);
-		
-		// do timer stuff here
-		// return (("${delayedActionPath} ${item.getProp('name')} ${seconds} ${action} ${item.processingStatus} ${item.processingSource}").toString());
 	}
 
 	def radioItemScriptPath(item)

@@ -113,7 +113,7 @@ class HelperService {
 				command << '-X'
 				command << 'POST'
 				command << '-d'
-				command << toString("'${data.toString()}'")
+				command << toString("${data.toString()}")
 			}
 		}
 

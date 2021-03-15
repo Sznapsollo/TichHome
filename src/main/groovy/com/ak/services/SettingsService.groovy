@@ -10,7 +10,7 @@ class SettingsService {
 	public def httpServerAddress
 	public def httpServerPort
 	public def eventBusPath
-	public def akHomeAutomationServerPath
+	public def serverRootPath
 	public def eventBusIdleLifespan
 	public def wwwPath
 	public def backupsPath
@@ -29,13 +29,14 @@ class SettingsService {
 	public def codeSendPath
 	public def conradCodeSendPath
 	public def saveDailyLogsToFile
+	public def saveDailySensorLogsToFile
 	public def webServerAddress
 	public def satelliteServerAddresses
 
     SettingsService() {}
     SettingsService(def config) {
 
-        localLogger "Starting akHomeAutomationServerPath with settings"
+        localLogger "Starting server with settings"
 
 		eventBusMessagesDelay = config.getInteger("eventbus.messages.delay", 4000)
 		localLogger "eventBusMessagesDelay: ${eventBusMessagesDelay}"
@@ -52,8 +53,8 @@ class SettingsService {
 		eventBusPath = config.getString("http.server.eventbus.path", "eventbus")
 		localLogger "eventBusPath: ${eventBusPath}"
 
-		akHomeAutomationServerPath = config.getString("http.server.akHomeAutomationServer.path", "akHomeAutomation")
-		localLogger "akHomeAutomationServerPath: ${akHomeAutomationServerPath}"
+		serverRootPath = config.getString("http.server.root.path", "tichhome")
+		localLogger "serverRootPath: ${serverRootPath}"
 
 		wwwPath = config.getString("www.path", null)
 		localLogger "wwwPath: ${wwwPath}"
@@ -102,6 +103,9 @@ class SettingsService {
 
 		saveDailyLogsToFile = config.getBoolean("save.daily.logs.to.file", true)
 		localLogger "save.daily.logs.to.file: ${saveDailyLogsToFile}"
+
+		saveDailySensorLogsToFile = config.getBoolean("save.daily.sensor.logs.to.file", true)
+		localLogger "save.daily.sensor.logs.to.file: ${saveDailyLogsToFile}"
 
 		webServerAddress = config.getString("web.server.address", '')
 		localLogger "web.server.address: ${webServerAddress}"

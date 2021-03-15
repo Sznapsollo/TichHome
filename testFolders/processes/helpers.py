@@ -63,7 +63,7 @@ class RequestPropertyManager(object):
 	postData = None
 
 	def __init__(self):
-		self.postData = {"outletId":None, "outletDelayed": None, "outletStatus": None, "outletSource": None }
+		self.postData = {"type": "toggle", "outletId":None, "outletDelayed": None, "outletStatus": None, "outletSource": None }
 	
 	def getRequestPostData(self):
 		return self.postData
@@ -87,10 +87,8 @@ class RequestPropertyManager(object):
 
 class Helper(object):
 
-	loggingEnabled = False
-	detailedLogging = False
-	saveDailyLogsToFile = True
-	saveDailySensorLogsToFile = True
+	loggingEnabled = True
+	detailedLogging = True
 	regularActionsCheckInterval = 60
 	checkSensorsUpdateCheckInterval = 60
 	sensorOnTimeMargin = 30
@@ -98,12 +96,6 @@ class Helper(object):
 	def __init__(self):
 		self.maxConnections = 3
 		self.settings = Settings()
-		
-		if "saveDailyLogsToFile" in self.settings.data:
-			self.saveDailyLogsToFile = self.settings.data["save.daily.logs.to.file"]
-			
-		if "saveDailySensorLogsToFile" in self.settings.data:
-			self.saveDailySensorLogsToFile = self.settings.data["saveDailySensorLogsToFile"]
 
 	def checkLuminosity(self):
 		# Get I2C bus
@@ -148,9 +140,15 @@ class Helper(object):
 
 		try:
 			if post is not None:
-				data = urllib.urlencode(post)
-				urllib2.urlopen(url,data)
+				self.logDetailedMessage('loadPageWithPost with post data url: ' + url)
+				# data = urllib.urlencode(post)
+				# urllib2.urlopen(url,data)
+
+				req = urllib2.Request(url)
+				req.add_header('Content-Type', 'application/json')
+				urllib2.urlopen(req, json.dumps(post))
 			else:
+				self.logDetailedMessage('loadPageWithPost url: ' + url)
 				urllib2.urlopen(url)
 		except urllib2.URLError as e:
 			if hasattr(e, 'reason'):
@@ -193,27 +191,7 @@ class Helper(object):
 
 	def runDeviceAction(self, requestProperties):
 		self.runDeviceActionInner(self.settings.data["web.server.address"], requestProperties)
-
-	def runSatellitesDeviceAction(self, requestProperties, async):
-		try:
-			#copy request but change source to current server
-			satelliteRequestProperties = RequestPropertyManager()
-			satelliteRequestProperties.setRequestPropertiesFromPostData(requestProperties.getRequestPostData())
-			satelliteRequestProperties.setRequestSource(self.settings.data["web.server.address"])
-			#pass to satellites if defined
-			if "satellite.server.addresses" in self.settings.data:
-				for serverAddr in self.settings.data["satellite.server.addresses"]:
-					if self.settings.data["web.server.address"] not in serverAddr:
-						if async:
-							t = threading.Thread(target=self.runDeviceActionInner, args=(serverAddr,satelliteRequestProperties))
-							t.start()
-						else:
-							self.runDeviceActionInner(serverAddr,satelliteRequestProperties)
-		except Exception as e:
-			message = "[Exception passing signal to satellites] exc " + str(e)
-			self.writeExceptionToFile(message)
-			self.logMessage(message)
-			
+	
 	def runDeviceActionInner(self, serverAddress, requestProperties):
 		postData = requestProperties.getRequestPostData()
 		messageBody = "device " + str(postData["outletId"]) + " ,status " + postData["outletStatus"] + " ,delay " + str(postData["outletDelayed"])
@@ -221,8 +199,14 @@ class Helper(object):
 			messageBody += ", source=" + str(postData["outletSource"])
 		
 		self.logMessage(messageBody)
+		actionsPart = ''
+		if serverAddress[-1].endswith('/'):
+			actionsPart += 'actions'
+		else:
+			actionsPart += '/actions'
 
-		self.loadPageWithPost(serverAddress + "/executables/toggle.php", postData, 0)
+		self.logDetailedMessage('Calling address: ' + serverAddress + actionsPart)
+		self.loadPageWithPost(serverAddress + actionsPart, postData, 0)
 
 	def runRadioSwitch(self, name, code):
 		command = "python " + self.settings.data["processes.files.path"] + "run_radio_switch.py " + name +" "+ code

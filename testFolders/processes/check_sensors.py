@@ -103,13 +103,16 @@ class Sensor(object):
 		GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 		self.messageSensorInfo("Initiating")
 
+	def isNotNullOrEmpty(self, prop):
+		return prop is not None and prop 
+
 	def checkDependency(self, device, message):
 
 		if "dependencyMethod" not in device or "dependencyValue" not in device or "dependencyOperation" not in device:
 			return True
 			
 		#dependency will come for now only from helper class
-		if device["dependencyMethod"] is not None and device["dependencyOperation"] is not None and device["dependencyValue"] is not None:
+		if self.isNotNullOrEmpty(device["dependencyMethod"]) and self.isNotNullOrEmpty(device["dependencyOperation"]) and self.isNotNullOrEmpty(device["dependencyValue"]):
 
 			if device["dependencyOperation"] == "grtr":
 				currentValue = getattr(helper, device["dependencyMethod"])()
@@ -200,26 +203,23 @@ class Sensor(object):
 					else:
 						continue
 
-				#checking if is still on by delay file
-				delayFilePath = helper.settings.data["delay.files.path"]+'{0}.json'.format(device["id"])
-				if os.path.isfile(delayFilePath):
-					with open(delayFilePath) as data_file:    
-						data = json.load(data_file)
-						if "time" in data and "delay" in data:
-							#remove 30 to limit situatioons when device turns off and then on again on signal
-							delaySeconds = (int)(data["delay"]) - helper.sensorOnTimeMargin;
-							deviceOffTime = datetime.datetime.fromtimestamp(int(data["time"])) + datetime.timedelta(0, delaySeconds)
+				# #checking if is still on by delay file
+				# delayFilePath = helper.settings.data["delay.files.path"]+'{0}.json'.format(device["id"])
+				# if os.path.isfile(delayFilePath):
+				# 	with open(delayFilePath) as data_file:    
+				# 		data = json.load(data_file)
+				# 		if "time" in data and "delay" in data:
+				# 			#remove 30 to limit situatioons when device turns off and then on again on signal
+				# 			delaySeconds = (int)(data["delay"]) - helper.sensorOnTimeMargin;
+				# 			deviceOffTime = datetime.datetime.fromtimestamp(int(data["time"])) + datetime.timedelta(0, delaySeconds)
 							
-							if currentEventTime < deviceOffTime:
-								self.messageSensorInfo("Device " + device["id"] + " is ON. Its delay time is "+deviceOffTime.strftime('%Y-%m-%d %H:%M:%S')+". Ignoring...")
-								updateLastValidSignalDate = False
-								continue
+				# 			if currentEventTime < deviceOffTime:
+				# 				self.messageSensorInfo("Device " + device["id"] + " is ON. Its delay time is "+deviceOffTime.strftime('%Y-%m-%d %H:%M:%S')+". Ignoring...")
+				# 				updateLastValidSignalDate = False
+				# 				continue
 
 				message.body += "enabling device " + str(device["id"]) + ", delay " + str(device["delay"]) + ", status " + onStatus
 				self.messageSensorInfo(message.body)
-
-				if helper.saveDailySensorLogsToFile:
-					helper.writeLogToFile(time.strftime('sensors/sensors_%Y%m%d'), message.body)
 
 				device["lastTriggered"] = currentEventTime
 				requestProperties = RequestPropertyManager()
