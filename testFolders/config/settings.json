@@ -29,7 +29,7 @@
 		"smtpServerPort":587
 	},
 	"save.daily.logs.to.file": true,
-	"saveDailySensorLogsToFile": true,
+	"save.daily.sensor.logs.to.file": true,
 	"canChangeAlarmSettings": true,
 	"logsDropdownFilter": [
 		{
