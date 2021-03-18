@@ -109,9 +109,21 @@ function initializeEventBus() {
 		var data = {type: 'preinitializeEventBusConnection'}
         data = JSON.stringify(data)
 
-        $.post( "actions", data,  function( responseData ) {
-            registerAKHomeAutomationOnEventBus(responseData.data)        
-        }, "json");      
+		$.ajax({
+			url:"actions",
+			type:"POST",
+			data:data,
+			contentType:"application/json; charset=utf-8",
+			dataType:"json",
+			success: function(responseData){
+				registerAKHomeAutomationOnEventBus(responseData.data)        
+			}
+		  })
+
+		// sends XMLHttpRequest
+        // $.post( "actions", {json_string:JSON.stringify(data)},  function( responseData ) {
+        //     registerAKHomeAutomationOnEventBus(responseData.data)        
+        // }, "json");      
     }
     globalEventBus.onclose = function() {
         localLogger("Connection to event bus closed. Attempting to reconect", 1)
@@ -192,11 +204,24 @@ var performAction = function(id, status, delayed) {
 		outletDelayed: delayed,
 		outletSource: 'Web',
 	}
-    data = JSON.stringify(data)
-	$.post('actions', data,
-		function(data, status) {
+	data = JSON.stringify(data)
+	
+	$.ajax({
+		url:"actions",
+		type:"POST",
+		data:data,
+		contentType:"application/json; charset=utf-8",
+		dataType:"json",
+		success: function(data, status) {
 			console.log(status);
-		});
+		}
+	})
+
+	// sends XMLHttpRequest
+	// $.post('actions', data,
+	// 	function(data, status) {
+	// 		console.log(status);
+	// 	}, "json");
 
 	$('#deleteModal').modal('hide'); 
 }

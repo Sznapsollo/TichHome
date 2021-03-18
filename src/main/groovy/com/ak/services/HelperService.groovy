@@ -122,6 +122,8 @@ class HelperService {
 			"1",
 			"-sB",
 			"-H",
+			'"Content-type: application/json"',
+			"-H",
 			'"Accept: application/json"',
 			(url.toString())
 		]
