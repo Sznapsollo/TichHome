@@ -181,7 +181,8 @@ class Server extends AbstractVerticle {
 		// curl -i -k -X POST  --header  "Content-Type: application/json"  --data '{"type":"backup"}' http://0.0.0.0:8081/akHomeAutomation/actions
 		def actionsPath = "/${settingsService.serverRootPath}/actions"
 		// router.route(actionsPath).handler(TimeoutHandler.create(3000)); // 3 seconds
-		router.route(actionsPath).handler(BodyHandler.create());
+		router.route(actionsPath).handler(BodyHandler.create()
+			.setHandleFileUploads(false));
 		router.route(actionsPath).handler({ routingContext ->
 			localLogger "Got actions signal"
 			def result = [status: 'OK', message: null]
@@ -282,6 +283,14 @@ class Server extends AbstractVerticle {
 			def resultObj = new JsonObject(result)
 			routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(resultObj.toString())
 		})
+
+		router.errorHandler(500, { rc ->
+			System.err.println("Handling actions failure");
+			Throwable failure = rc.failure();
+			if (failure != null) {
+				failure.printStackTrace();
+			}
+		});
 	}
 	
 	private def addPageProps(Map propertiesObj) {
