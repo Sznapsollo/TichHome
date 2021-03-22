@@ -184,7 +184,9 @@ class Server extends AbstractVerticle {
 		router.route(actionsPath).handler(BodyHandler.create()
 			.setHandleFileUploads(false));
 		router.route(actionsPath).handler({ routingContext ->
-			localLogger "Got actions signal"
+			def remoteAddress = routingContext?.request()?.remoteAddress()
+			localLogger "Got actions signal from ${remoteAddress}"
+			
 			def result = [status: 'OK', message: null]
 
 			def incomingData = routingContext.getBodyAsJson()
@@ -206,6 +208,7 @@ class Server extends AbstractVerticle {
 			try {
 				switch(incomingData?.type) {
 					case 'toggle':
+						incomingData.outletSource = "${incomingData.outletSource ?: '#'} - ${remoteAddress ?: '#'}"
 						result.data = toggleAction(incomingData)
 						result.message = 'ok'
 						break;
