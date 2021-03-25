@@ -207,8 +207,7 @@ class Server extends AbstractVerticle {
 			try {
 				switch(incomingData?.type) {
 					case 'toggle':
-						def remoteAddress = routingContext?.request()?.remoteAddress()
-						incomingData.outletSource = "${incomingData.outletSource ?: '#'} - ${remoteAddress ?: '#'}"
+						incomingData.remoteAddress = routingContext?.request()?.remoteAddress()
 						result.data = toggleAction(incomingData)
 						result.message = 'ok'
 						break;

@@ -62,6 +62,7 @@ class SignalSenderService {
 		def outletStatus = incomingData.outletStatus
 		def outletDelayed = incomingData.outletDelayed
 		def outletSource = incomingData.outletSource
+		def remoteAddress = incomingData.remoteAddress
 
 		if(!outletLight) {
 			return	returnData
@@ -73,9 +74,6 @@ class SignalSenderService {
 		if(!itemToProcess) {
 			return returnData
 		}
-
-		itemToProcess.processingStatus = outletStatus;
-		itemToProcess.processingSource = outletSource ?: "-";
 
 		if(outletStatus == "on" && outletSource == "Sensor") {
 			def scheduledActionKey = toString('delayProcess_' + itemToProcess.getProp('name'))
@@ -90,6 +88,9 @@ class SignalSenderService {
 			}
 		}
 
+		itemToProcess.processingStatus = outletStatus;
+		itemToProcess.processingSource = outletSource ?: "-";
+
 		if(outletStatus == "on") {
 			if(itemToProcess instanceof ItemCheckerService.GroupItem) {
 				itemToProcess.getProp('itemIDs')?.each { code ->
@@ -102,7 +103,7 @@ class SignalSenderService {
 					subItemToProcess.processingSource = outletSource ?: "-";
 					enableItem(subItemToProcess, outletDelayed);
 					if(shouldLogToggleAction) {
-						logToggleAction(code, outletDelayed, outletStatus, outletSource)
+						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
 					}
 					Thread.sleep(1000);
 				}
@@ -110,13 +111,13 @@ class SignalSenderService {
 			else if(itemToProcess instanceof ItemCheckerService.IntItem) {
 				enableItem(itemToProcess, outletDelayed);
 				if(shouldLogToggleAction) {
-					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+					logToggleAction([outletLight:outletLight, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
 				}
 			}
 			else if(itemToProcess instanceof ItemCheckerService.MacItem) {
 				turnComputerOn(itemToProcess.CodeOn()); 
 				if(shouldLogToggleAction) {
-					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+					logToggleAction([outletLight:outletLight, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
 				}
 			}
 		}
@@ -132,7 +133,7 @@ class SignalSenderService {
 					subItemToProcess.processingSource = outletSource ?: "-";
 					disableItem(subItemToProcess);
 					if(shouldLogToggleAction) {
-						logToggleAction(code, outletDelayed, outletStatus, outletSource)
+						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
 					}
 					Thread.sleep(1000);
 				}
@@ -140,7 +141,7 @@ class SignalSenderService {
 			else if(itemToProcess instanceof ItemCheckerService.IntItem) {
 				disableItem(itemToProcess);
 				if(shouldLogToggleAction) {
-					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+					logToggleAction([outletLight:outletLight, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
 				}
 			}
 		}
@@ -148,7 +149,7 @@ class SignalSenderService {
 			if(itemToProcess instanceof ItemCheckerService.IntItem) {
 				delayedDisableItem(itemToProcess, outletDelayed);
 				if(shouldLogToggleAction) {
-					logToggleAction(outletLight, outletDelayed, outletStatus, outletSource)
+					logToggleAction([outletLight:outletLight, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
 				}
 			}
 		}
@@ -156,10 +157,24 @@ class SignalSenderService {
 		return returnData
 	}
 
-	def logToggleAction(def outletLight, def outletDelayed, def outletStatus, def outletSource) {
+	def logToggleAction(def args) {
+
+		def outletLight = args.outletLight
+		def outletDelayed = args.outletDelayed
+		def outletStatus = args.outletStatus
+		def outletSource = args.outletSource
+		def remoteAddress = args.remoteAddress
+
+		def sourceMsg = ""
+		if(remoteAddress) {
+			sourceMsg = "${outletSource ?: '#'} - ${remoteAddress ?: '#'}"
+		} else {
+			sourceMsg = "${outletSource ?: '#'}"
+		}
+
 		if(saveDailyLogsToFile) {
 			def currDate = new Date()
-			def logBody = toString("${logLineDateFormat.format(currDate)}: device ${outletLight}, delay=${outletDelayed}, status=${outletStatus}, source=${outletSource}")
+			def logBody = toString("${logLineDateFormat.format(currDate)}: device ${outletLight}, delay=${outletDelayed}, status=${outletStatus}, source=${sourceMsg}")
 			def logsFileName = "actions_${logFileNameDateFormat.format(currDate)}.log"
 			def actionsLogFolderPath = toString("${logsFolderPath}/actions/")
 			helperService.appendFile(actionsLogFolderPath, logsFileName, logBody)
@@ -167,7 +182,7 @@ class SignalSenderService {
 
 		if(saveDailySensorLogsToFile && outletStatus == "on" && outletSource == "Sensor") {
 			def currDate = new Date()
-			def logBody = toString("${logLineDateFormat.format(currDate)}: device ${outletLight}, delay=${outletDelayed}, status=${outletStatus}, source=${outletSource}")
+			def logBody = toString("${logLineDateFormat.format(currDate)}: device ${outletLight}, delay=${outletDelayed}, status=${outletStatus}, source=${sourceMsg}")
 			def logsFileName = "sensors_${logFileNameDateFormat.format(currDate)}.log"
 			def actionsLogFolderPath = toString("${logsFolderPath}/sensors/")
 			helperService.appendFile(actionsLogFolderPath, logsFileName, logBody)

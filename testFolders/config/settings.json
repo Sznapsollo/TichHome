@@ -6,7 +6,7 @@
     "http.server.address": "0.0.0.0",
     "http.server.port": 8081,
     "http.server.eventbus.path": "eventbus",
-    "http.server.akHomeAutomationServer.path": "tichhome",
+    "http.server.root.path": "tichhome",
     "www.path": "src/main/resources/webroot",
 	"backups.path": "backups",
 	"nodes.file.path": "/home/pi/tichhome/config/nodes.json",
