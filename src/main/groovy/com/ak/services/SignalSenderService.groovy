@@ -225,7 +225,7 @@ class SignalSenderService {
 		} else if(item instanceof ItemCheckerService.IntItem) {
 			delayedDisableRadioItem(item, outletDelayed);
 		}
-		notifySatellites(item, 'offd', 0)
+		notifySatellites(item, 'offd', outletDelayed)
 	}
 
 	def turnComputerOn(def macaddress)
