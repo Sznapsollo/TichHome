@@ -53,16 +53,23 @@ class SignalSenderService {
     }
 
 	def toggleAction(def incomingData) {
-		def returnData = [returnData: [:], notifyIds: []]
+		def returnData = [notifyIds: []]
 		def shouldLogToggleAction = true
-		localLogger 'toggleAction'
-		localLogger incomingData
 
 		def outletLight = incomingData.outletId
 		def outletStatus = incomingData.outletStatus
-		def outletDelayed = incomingData.outletDelayed
+		def outletDelayed = incomingData.outletDelayed ?: 0
 		def outletSource = incomingData.outletSource
 		def remoteAddress = incomingData.remoteAddress
+
+		try {
+			if(outletDelayed instanceof String) {
+				outletDelayed = Integer.parseInt(outletDelayed)
+			}
+		} catch(Exception e) {
+			outletDelayed = 0
+			localLogger "!!! Invalid outletDelayed value ${outletDelayed}"
+		}
 
 		if(!outletLight) {
 			return	returnData
@@ -320,6 +327,7 @@ class SignalSenderService {
 		if(!(seconds > 0)) {
 			return null
 		}
+		localLogger 'aaaaa222'
 
 		def scheduledActionKey = toString('delayProcess_' + item.getProp('name'))
 

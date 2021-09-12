@@ -111,7 +111,6 @@ class Server extends AbstractVerticle {
 		router = Router.router(vertx)
 		
 		prepareFileWebserver()
-		prepareSearchKeyWarningsRoute()
 		prepareActionsRoute()
 		prepareWebsocketServer()
 
@@ -150,21 +149,6 @@ class Server extends AbstractVerticle {
 			staticPageHandler.setWebRoot(settingsService.wwwPath)
 		}
 		router.route("/${settingsService.serverRootPath}/*").handler(staticPageHandler)
-	}
-
-	private void prepareSearchKeyWarningsRoute() {
-		// curl -i -k -X POST  --header  "Content-Type: application/json"  --data '{"searchCriteria":{"text":"SZUKANA FRAZA"}}' http://0.0.0.0:8081/akHomeAutomation/searchKeyWarnings
-		def searchKeyWarningsPath = "/${settingsService.serverRootPath}/searchKeyWarnings"
-		router.route(searchKeyWarningsPath).handler(BodyHandler.create());
-		router.route(searchKeyWarningsPath).handler({ routingContext ->
-			def incomingData = routingContext.getBodyAsJson()
-			
-			def searchResults = performKeyCacheSearch(incomingData)
-
-			def resultObj = new JsonObject(searchResults)
-			routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(resultObj.toString())
-			// routingContext.response().putHeader("content-type", "text/html").end("Hello World!")
-		})
 	}
 
 	private void stopRegularActionsService() {
@@ -317,6 +301,7 @@ class Server extends AbstractVerticle {
 	private def toggleAction(def incomingData) {
 		def returnData = signalSenderService.toggleAction(incomingData)
 		
+		returnData.returnData = checkDelayData([id: incomingData.outletId])
 		returnData?.notifyIds?.each { notifyIdItem ->
 			pushEventBusMessage([path: "applicationMessage/", type: 'nodeChange', message: [name: (("toogle${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyIdItem]])
 		}
@@ -420,7 +405,9 @@ class Server extends AbstractVerticle {
 						regularActions: item.getProp('regularActions'), 
 						itemType: (item instanceof ItemCheckerService.WebItem) ? 'Web' : null,
 						itemSubType: "I", 
-						enabled: item.getProp('enabled')
+						enabled: item.getProp('enabled'),
+						delayData: checkDelayData([id: item.getProp('name')]),
+						regularActionData: checkRegularActionData([id: item.getProp('name')])
 					]
 				}
 				else if(item instanceof ItemCheckerService.GroupItem || item instanceof ItemCheckerService.MacItem)
@@ -904,14 +891,15 @@ class Server extends AbstractVerticle {
 	private def setRegularActionData(def incomingData) {
 		def id = incomingData.id
 		def timeLine = incomingData.timeLine
+		def returnData = [:]
 
 		if(!id) {
-			return
+			return returnData
 		}
 
 		def item = itemCheckerService.checkItem(id)
 		if(!item) {
-			return
+			return returnData
 		}
 
 		def fileName = "${item.getProp('name')}_regular_action.json"
@@ -956,6 +944,8 @@ class Server extends AbstractVerticle {
 			}
 			item.regularActionsData = null
 		}
+		returnData = checkRegularActionData(incomingData)
+		return returnData
 	}
 
 	private void sendApplicationExceptionMessage(def exception) {
@@ -1172,7 +1162,6 @@ class Server extends AbstractVerticle {
 		BridgeOptions bridgeOptions = new BridgeOptions()
 				.addOutboundPermitted(new PermittedOptions().setAddressRegex('^(applicationMessage\\/).*$'))
 				.addInboundPermitted(new PermittedOptions().setAddress('register/'));
-				// .addInboundPermitted(new PermittedOptions().setAddress('searchKeyWarnings/'));
 
 		def socketJSHandler = SockJSHandler.create(vertx)
 		socketJSHandler.bridge(bridgeOptions)

@@ -1,0 +1,266 @@
+.btn {
+	background-image: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.2) 49%, rgba(0,0,0,0.02) 51%, rgba(0,0,0,0.05));
+	background-repeat: repeat-x;
+}
+
+.btn-success {
+	color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    color: #fff;
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.powerswitchbuttons .btn-disable {
+	border: 1px solid #cccccc;
+	background-color: #efefef;
+}
+
+.powerswitchbuttons .timeOff {
+	font-size: 18px;
+}
+
+.turnedOff {
+	opacity: 0.5;
+}
+
+.numberPicker {
+	float: right;
+}
+
+.numberPicker input {
+	font-size: 8pt;
+	width: 70px;
+}
+
+.numberPicker > div {
+	float: right;
+	font-size: 8pt;
+	color: #000000;
+}
+
+.timerNormal {
+	font-size: 8pt;
+}
+
+.timerChoice {
+	font-size: 12pt;
+	font-weight: 700;
+}
+
+@media only screen and (max-device-width: 480px)
+{
+	.numberPicker input {
+		width: 50px;
+	}
+
+}
+
+.timeInputField {
+	border-radius: 5px;
+	border: 1px solid rgb(224 225 226);
+	background: white;
+}
+
+.pagerArea
+{
+	clear: both;
+	margin: 0 0 15px 0;
+	font-weight: 700;
+}
+
+.pagerArea .choosePageArea
+{
+	margin: 0 10px 0 10px;
+}
+
+.pagerArea .pagerButtons {
+	margin-top: 15px;
+}
+
+.pagerArea  A {
+	font-family: tahoma;
+	font-size: 10pt;
+	color: #555555;
+	text-decoration: none;
+	padding: 10px;
+	border: 1px solid #ffffff;
+	text-transform: uppercase;
+	background: rgba(255,255,255,0.3);
+}
+
+.pagerArea  A:visited {
+	color: #555555;
+	text-decoration: none;
+}
+
+.pagerArea  A:active {
+	color: #555555;
+	text-decoration: none;
+}
+
+.pagerArea  A:hover {
+	color: #3399ff;
+	text-decoration: none;
+	border: 1px solid #3399ff;
+	border-radius: 5px;
+}
+
+.evenRow  {
+	background: rgba(0,0,0,0.1);
+}
+
+.redBlinker {
+  animation: redblinker 2s linear infinite;
+}
+
+@keyframes redblinker {
+	50% {
+		color: red;
+	}
+}
+
+.machineAvailability {
+	cursor: pointer;
+	font-size: 8pt;
+}
+
+.sensorswitch,
+.powerswitch {
+	margin: 15px 0 8px 0;
+}
+
+.sensorswitch .switchHeader,
+.powerswitch .switchHeader {
+	font-size: 24px;
+}
+
+.switchIconClickable, 
+.switchCalendarIcon,
+.switchHeaderClickable {
+	cursor: pointer;
+}
+
+.switchIconClickable:hover, 
+.switchCalendarIcon:hover {
+	-webkit-animation-name: wobble-top;
+	animation-name: wobble-top;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-timing-function: ease-in-out;
+	animation-timing-function: ease-in-out;
+	-webkit-animation-iteration-count: 1;
+	animation-iteration-count: 1;
+}
+
+.switchHeaderClickable:hover {
+	color: #367d36;
+	-o-transition:.3s;
+	-ms-transition:.3s;
+	-moz-transition:.3s;
+	-webkit-transition:.3s;
+	transition:.3s;
+}
+
+/* Wobble Top */
+@-webkit-keyframes wobble-top {
+	16.65% {
+		-webkit-transform: skew(-12deg);
+		transform: skew(-12deg);
+	}
+
+	33.3% {
+		-webkit-transform: skew(10deg);
+		transform: skew(10deg);
+	}
+
+	49.95% {
+		-webkit-transform: skew(-6deg);
+		transform: skew(-6deg);
+	}
+
+	66.6% {
+		-webkit-transform: skew(4deg);
+		transform: skew(4deg);
+	}
+
+	83.25% {
+		-webkit-transform: skew(-2deg);
+		transform: skew(-2deg);
+	}
+
+	100% {
+		-webkit-transform: skew(0);
+		transform: skew(0);
+	}
+}
+
+.modal-body {
+	max-height: calc(100vh - 220px);
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
+.sub-section {
+	border-radius: 5px; 
+	background-image: linear-gradient(#e2e2e2, white); 
+	padding: 10px;
+}
+
+.regularSettings .form-control,
+.logDetailsArea .form-control {
+	display: inline; 
+	width: auto;
+}
+
+.regularSettings .form-inline {
+	display: block;
+}
+
+.settingsSection {
+	padding:15px; 
+	border-bottom: 1px dotted #cecece; 
+}
+
+.closeSubSectionButton {
+	position: absolute; 
+	margin: 0px 0 0 -15px; 
+	border-radius: 10px; 
+	padding: 2px 3px; 
+	line-height: 1; 
+	background: white; 
+}
+
+.invalidInput {
+	border:2px solid red;
+}
+
+.relatedItems {
+	font-size: 8pt; color: #666666; padding-bottom: 2px;
+}
+
+.navbar-light .navbar-nav .active {
+	font-weight: 700;
+}
+
+.customAlert {
+    position: fixed;
+    width: 100%;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: none;
+}
+
+.formRangeSlider {
+	height: 10px; 
+	margin-top: 15px;
+}
+
+.font-weight-bold {
+	font-weight: 700;
+  }
