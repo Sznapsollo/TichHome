@@ -13,9 +13,8 @@ const LogList = {
 		<div>&nbsp;</div>
 		
 		<div v-if="items.length > 0">
-			<pager page="logsList/{{logType}}"></pager>
+			<pager v-bind:logType="logType" v-bind:startIndex="startIndex" v-bind:itemsPerPage="itemsPerPage" v-bind:allCount="allCount"></pager>
 		</div>
-		
 	</div>`,
 	setup(props, context) {
 		const itemscount = Vue.ref(0);
@@ -26,6 +25,9 @@ const LogList = {
 		const route = VueRouter.useRoute()
 		const items = Vue.ref([])
 		const logType = Vue.ref(null)
+		const startIndex = Vue.ref(0)
+		const itemsPerPage = Vue.ref(0)
+		const allCount = Vue.ref(0)
 		
 		const translateAll = function() {
 			pageTitle.value = automation.translate('logs_' + logType.value);
@@ -55,8 +57,9 @@ const LogList = {
 						if(dataResponse.data) {
 							dataLoading.value = false;
 							items.value = dataResponse.data.items || []
-							// allCount = dataResponse.data.allCount || 0
-							// $rootScope.$broadcast('calculateImagesPaging', $scope.allCount);
+							allCount.value = dataResponse.data.allCount
+							itemsPerPage.value = route.params.itemsPerPage
+							startIndex.value = route.params.startIndex
 						} else {
 							showErrorMessage('Logs data receive error for ' + route.params.logsType)			
 						}
@@ -85,12 +88,16 @@ const LogList = {
 		})
 
 		return {
+			allCount,
 			checkItemsData,
 			getFileContent,
 			items,
 			dataLoading,
 			itemscount,
+			itemsPerPage,
+			logType,
 			pageTitle,
+			startIndex,
 			url,
 			todayFileName
 		}
