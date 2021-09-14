@@ -50,8 +50,8 @@ var logsDataService = {
 	checkLogsListData: function(logsType, startIndex, itemsPerPage, callback, failCallback) {
 		sendActionsData({type: 'checkLogsListData', category: logsType, startIndex: startIndex, itemsPerPage: itemsPerPage}, callback, failCallback)
 	},
-	checkLogsFileData: function(logsType, fileName, callback, failCallback) {
-		sendActionsData({type: 'checkLogsFileData', category: logsType, fileName: fileName}, callback, failCallback)
+	checkLogsFileData: function(logType, fileName, callback, failCallback) {
+		sendActionsData({type: 'checkLogsFileData', category: logType, fileName: fileName}, callback, failCallback)
 	}
 }
 

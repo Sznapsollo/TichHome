@@ -360,12 +360,6 @@ var automation = function() {
 		return code;
 	}
 	
-	function fillAndLaunchLogModal(title, logBody) {
-		$('#modalDialog .modal-body-p').html(logBody);
-		$('#modalDialog .modal-title').html(title);
-		$('#modalDialog').modal('show');
-	}
-	
 	function launchItemModal(body) {
 		$('#modalItemDialog .modal-content').html(body);
 		$('#modalItemDialog').modal('show');

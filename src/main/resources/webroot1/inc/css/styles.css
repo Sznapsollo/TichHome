@@ -110,8 +110,12 @@
 	border-radius: 5px;
 }
 
-.evenRow  {
+.logRow:nth-child(odd){
 	background: rgba(0,0,0,0.1);
+}
+
+.logRow:nth-child(even){
+	background: #ffffff;
 }
 
 .redBlinker {

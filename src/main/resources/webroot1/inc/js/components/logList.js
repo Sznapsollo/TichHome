@@ -3,7 +3,7 @@ const LogList = {
 		<h4>{{pageTitle}}</h4>
 		
 		<div style="display: inline-block; padding: 10px 5px" v-for="(item, index) in items">
-			<a v-bind:class="{'font-weight-bold' : todayFileName == item.name}" href="" v-on:click="getFileContent(item.name)">{{item.name}}</a>
+			<a style="cursor: pointer" v-bind:class="{'font-weight-bold' : todayFileName == item.name}" v-on:click="getFileContent(item.name)">{{item.name}}</a>
 		</div>
 		
 		<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
@@ -34,10 +34,12 @@ const LogList = {
 		}
 
 		const getFileContent = function(fileName) {
-			var detailLogNode = document.createElement("log-details");
-			detailLogNode.setAttribute("log-name", fileName);
-			var detailLogScope = $scope.$new();
-			automation.FillAndLaunchLogModal(fileName, $compile(detailLogNode)(detailLogScope));
+			window.mittEmitter.emit('showLogs', {logType: logType.value, fileName: fileName});
+			$('#modalLogDialog').modal('show');
+
+			// $('#modalLogDialog .modal-title').html(fileName);  
+			// Vue.createApp(LogDetails, {logType: logType.value, fileName: fileName}).mount('#modalLogDialog .modal-body-p');
+			// $('#modalLogDialog').modal('show');
 		}
 
 		const checkItemsData = function() {
@@ -50,7 +52,6 @@ const LogList = {
 			var date = new Date();
 			todayFileName.value = logType.value + "_" + moment(date).format("yyyyMMDD") + ".log";
 
-			// debugger
 			logsDataService.checkLogsListData(logType.value, route.params.startIndex, route.params.itemsPerPage,
 				function(dataResponse) {
 					if(dataResponse.message == 'ok') {
