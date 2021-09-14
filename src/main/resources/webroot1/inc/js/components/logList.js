@@ -3,7 +3,7 @@ const LogList = {
 		<h4>{{pageTitle}}</h4>
 		
 		<div style="display: inline-block; padding: 10px 5px" v-for="(item, index) in items">
-			<a style="cursor: pointer" v-bind:class="{'font-weight-bold' : todayFileName == item.name}" v-on:click="getFileContent(item.name)">{{item.name}}</a>
+			<a style="cursor: pointer" class="fakeLink" v-bind:class="{'font-weight-bold' : todayFileName == item.name}" v-on:click="getFileContent(item.name)">{{item.name}}</a>
 		</div>
 		
 		<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>

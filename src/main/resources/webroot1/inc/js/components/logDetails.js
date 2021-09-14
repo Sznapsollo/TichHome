@@ -11,9 +11,9 @@ app.component('log-details', {
 					<p class="modal-body-p">
 						<div class="logDetailsArea">
 							<div class="form-inline">
-								<a style="cursor: pointer;" v-on:click="orderByType = !orderByType">Change Sort</a>
+								<a class="fakeLink" style="cursor: pointer;" v-on:click="orderByType = !orderByType">Change Sort</a>
 								&nbsp;|&nbsp;
-								<a style="cursor: pointer;" v-if="!dataLoading" v-on:click="checkLogDetails()">Refresh</a>
+								<a class="fakeLink" style="cursor: pointer;" v-if="!dataLoading" v-on:click="checkLogDetails()">Refresh</a>
 								<i v-if="dataLoading" class="fa fa-cog fa-spin"></i>
 								&nbsp;|&nbsp;
 								<input type="text" style="width: 100px" v-model="searchQuery" :placeholder="[[searchLabel]]" class="form-control" >
