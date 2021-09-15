@@ -13,9 +13,9 @@ app.component('switch-item', {
 			<i class="fa fa-close"></i>
 		</button>
 		<span class="machineAvailability" v-if="itemSubType == 'M'" v-on:click="checkAvailability()">
-			<span v-if="machineAvailability == null">{{availabilityNotCheckedLabel}}</span>
-			<span v-if="machineAvailability" style="color:green">{{availabilityAvailableLabel}}</span>
-			<span v-if="machineAvailability == false" style="color:red">{{availabilityunavailableLabel}}</span>
+			<span v-if="machineAvailability == null">{{translate('availability_not_checked')}}</span>
+			<span v-if="machineAvailability" style="color:green">{{translate('availability_available')}}</span>
+			<span v-if="machineAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
 		</span>
 		<div class="numberPicker" v-if="delay">
 			<input v-if="showTimer" type="number" v-model="delayValue" v-on:change="changeTimer(delayValue)" min="{{minSliderValue}}" max="{{maxSliderValue}}"  class="form-control" data-min="0" />
@@ -53,12 +53,13 @@ app.component('switch-item', {
 	</div>
 	<div class="powerswitchbuttons btn-group d-flex"  aria-label="...">
 		<div class="btn-group w-100" role="group" v-if="boolValue(enableOn)">
-			<button :disabled="busy" type="button" class="btn btn-default btn-lg btn-success w-100" v-on:click="clickButton({'outletId':outletId,'status':'on','delay':delayValue*60})" v-bind:class="{'turnedOff':!isActive('pin2',1), 'btn-info': questionOn}">{{enableLabel}}<span class="timerNormal" v-if="showTimer">&nbsp;({{disableAtLabel}}&nbsp;{{$filters.formatDate(calculatedTime, 'HH:mm')}})</span></button>
+			<button :disabled="busy" type="button" class="btn btn-default btn-lg btn-success w-100" v-on:click="clickButton({'outletId':outletId,'status':'on','delay':delayValue*60})" v-bind:class="{'turnedOff':!isActive('pin2',1), 'btn-info': questionOn}">{{translate('enable')}}<span class="timerNormal" v-if="showTimer">&nbsp;({{translate('disable_at')}}&nbsp;{{$filters.formatDate(calculatedTime, 'HH:mm')}})</span></button>
 		</div>
 		<div class="btn-group w-100" role="group"  v-if="boolValue(enableOff)">
-			<button  :disabled="busy" type="button" class="btn btn-default btn-lg w-100" v-on:click="clickButton({'outletId':outletId,'status':'off'})" v-bind:class="{'turnedOff':!isActive('pin2',0), 'btn-danger': questionOff, 'btn-disable': !questionOff}"><span v-if="!timeEnd">{{disableLabel}}</span><span v-if="timeEnd"><span class="timeOff"><span class="timeEnd">{{$filters.formatDate(timeEnd, 'HH:mm:ss')}}</span> (<span class="disableDate">{{$filters.formatDate(disableDate, 'HH:mm')}}</span>)</span></span></button>
+			<button  :disabled="busy" type="button" class="btn btn-default btn-lg w-100" v-on:click="clickButton({'outletId':outletId,'status':'off'})" v-bind:class="{'turnedOff':!isActive('pin2',0), 'btn-danger': questionOff, 'btn-disable': !questionOff}"><span v-if="!timeEnd">{{translate('disable')}}</span><span v-if="timeEnd"><span class="timeOff"><span class="timeEnd">{{$filters.formatDate(timeEnd, 'HH:mm:ss')}}</span> (<span class="disableDate">{{$filters.formatDate(disableDate, 'HH:mm')}}</span>)</span></span></button>
 		</div>
 	</div>
+	<div style="display: none">{{refresher}}</div>
 	`,
 	setup(props, context) {
 
@@ -81,13 +82,6 @@ app.component('switch-item', {
 		const regularActions = Vue.ref(item.regularActions);
 		const relatedItems = Vue.ref(item.relatedItems);
 		
-		const availabilityNotCheckedLabel = Vue.ref('availability_not_checked');
-		const availabilityAvailableLabel = Vue.ref('availability_available');
-		const availabilityunavailableLabel = Vue.ref('availability_unavailable');
-		const enableLabel = Vue.ref('enable');
-		const disableAtLabel = Vue.ref('disable_at');
-		const disableLabel = Vue.ref('disable');
-
 		const disableDate = Vue.ref(null);
 		const calendarIconName = Vue.ref(automation.getIcon('calendar',''))
 		const calculatedTime = Vue.ref('---');
@@ -102,6 +96,7 @@ app.component('switch-item', {
 		const machineAvailability = Vue.ref(null);
 		const timeEnd = Vue.ref("");
 		const regularActionData = Vue.ref({});
+		const refresher = Vue.ref(true)
 
 		var timerCheckData;
 		var timerCountDownDelay;
@@ -198,13 +193,12 @@ app.component('switch-item', {
 			);
 		}
 
+		const translate = function(code) {
+			return automation.translate(code)
+		}
+
 		const translateAll = function() {
-			availabilityNotCheckedLabel.value = automation.translate('availability_not_checked');
-			availabilityAvailableLabel.value  = automation.translate('availability_available');
-			availabilityunavailableLabel.value = automation.translate('availability_unavailable');
-			enableLabel.value = automation.translate('enable');
-			disableAtLabel.value = automation.translate('disable_at');
-			disableLabel.value = automation.translate('disable');
+			refresher.value = !refresher.value
 		}
 
 		const boolValue = function(value) {return automation.boolValue(value)};
@@ -452,9 +446,6 @@ app.component('switch-item', {
 		translateAll() 
 
 		return {
-			availabilityNotCheckedLabel,
-			availabilityAvailableLabel,
-			availabilityunavailableLabel,
 			boolValue,
 			busy,
 			calculatedTime,
@@ -469,9 +460,6 @@ app.component('switch-item', {
 			delayedDisableClicked,
 			delayValue,
 			disableDate,
-			disableLabel,
-			disableAtLabel,
-			enableLabel,
 			header,
 			enableOn,
 			enableOff,
@@ -488,6 +476,7 @@ app.component('switch-item', {
 			questionOff,
 			questionOn,
 			questions,
+			refresher,
 			regularActions,
 			regularActionData,
 			relatedItems,
@@ -496,7 +485,8 @@ app.component('switch-item', {
 			showTimer,
 			timeEnd,
 			toggleRegularOptions,
-			toggleSliderOptions
+			toggleSliderOptions,
+			translate
 		}
 	}
 })

@@ -40,7 +40,7 @@
 
 			<div class="container-fluid">
 				<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-					<router-link :to="{ name: 'switchItemsTab', params: {category: 'general'} }" class="navbar-brand" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'general' }">{{homeLabel}}</router-link>
+					<router-link :to="{ name: 'switchItemsTab', params: {category: 'general'} }" class="navbar-brand" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'general' }">{{translate('homepage')}}</router-link>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTichHome" aria-controls="navbarTichHome" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
@@ -51,29 +51,29 @@
 				<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
 					<ul class="navbar-nav ms-auto">
 						<li class="nav-item" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'advanced' }">
-							<router-link :to="{ name: 'switchItemsTab', params: {category: 'advanced'} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{advancedLabel}}</router-link>
+							<router-link :to="{ name: 'switchItemsTab', params: {category: 'advanced'} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('advanced')}}</router-link>
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								{{adminLabel}}
+								{{translate('admin')}}
 							</a>
 							<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarScrollingDropdown">
 								<li>
-									<router-link :to="{ name: 'manageItemList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='manageItemList'}">{{itemsLabel}}</router-link>
+									<router-link :to="{ name: 'manageItemList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='manageItemList'}">{{translate('items')}}</router-link>
 								</li>
 								<li>
-									<router-link :to="{ name: 'sensorList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='sensorList'}">{{sensorsLabel}}</router-link>
+									<router-link :to="{ name: 'sensorList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='sensorList'}">{{translate('sensors')}}</router-link>
 								</li>
 							</ul>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'actions' }">
-							<router-link :to="{ name: 'logList', params: {logType: 'actions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{logsActionsLabel}}</router-link>
+							<router-link :to="{ name: 'logList', params: {logType: 'actions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_actions')}}</router-link>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'sensors' }">
-							<router-link :to="{ name: 'logList', params: {logType: 'sensors', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{logsSensorsLabel}}</router-link>
+							<router-link :to="{ name: 'logList', params: {logType: 'sensors', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_sensors')}}</router-link>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'exceptions' }">
-							<router-link :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{logsExceptionsLabel}}</router-link>
+							<router-link :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_exceptions')}}</router-link>
 						</li>
 					</ul>
 					<span v-if="showCheckLog" class="navbar-text redBlinker">
@@ -113,7 +113,7 @@
 			<div class="modal-dialog">
 			  <div class="modal-content">
 				<div class="modal-header">
-				  <h5 class="modal-title">{{carefulLabel}}</h5>
+				  <h5 class="modal-title">{{translate('careful')}}</h5>
 				  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -121,13 +121,16 @@
 					<button type="button" class="btn btn-default btn-lg btn-warning toggleOutlet confirmTrigger"></button>
 				</div>
 				<div class="modal-footer">
-				  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{closeLabel}}</button>
+				  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{translate('close')}}</button>
 				</div>
 			  </div>
 			</div>
 		</div>
 
+		<item-modal></item-modal>
 		<log-details></log-details>
+		
+		<div style="display: none">{{refresher}}</div>
 	</div>
 
 	<script type="text/javascript" src="inc/js/app.js" ></script>
@@ -135,6 +138,7 @@
 	<script type="text/javascript" src="inc/js/components/switchItem.js"></script>
 	<script type="text/javascript" src="inc/js/components/hoursAndMinutes.js"></script>
 	<script type="text/javascript" src="inc/js/components/regularSettings.js"></script>
+	<script type="text/javascript" src="inc/js/components/itemModal.js"></script>
 	<script type="text/javascript" src="inc/js/components/logDetails.js"></script>
 	<script type="text/javascript" src="inc/js/components/logList.js"></script>
 	<script type="text/javascript" src="inc/js/components/pager.js"></script>

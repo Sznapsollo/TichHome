@@ -3,8 +3,6 @@ const SwitchItemsTab = {
 	template: `
 		<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
 		<div class="switchItemsList">
-			<div>Category {{ tabCategory }}</div>
-			<div class="header"><div class="headerLabel">Odbiorców ({{switchItems.length}})</div></div>
 			<div class="switchItems">
 				<switch-item 
 				v-bind:item="item" 

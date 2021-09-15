@@ -360,16 +360,6 @@ var automation = function() {
 		return code;
 	}
 	
-	function launchItemModal(body) {
-		$('#modalItemDialog .modal-content').html(body);
-		$('#modalItemDialog').modal('show');
-	}
-	
-	function closeItemModal() {
-		$('#modalItemDialog .modal-content').html('');
-		$('#modalItemDialog').modal('toggle');
-	}
-	
 	function confirm(id, status, delay, message) {
 	
 		var buttonLabel = status == 'on' ? translate('enable') : translate('disable');
@@ -405,9 +395,6 @@ var automation = function() {
 		checkRequiredFields: function(requiredFields, collection) {
 			return checkRequiredFields(requiredFields, collection);
 		},
-		closeItemModal: function() {
-			return closeItemModal();
-		},
 		confirm: function(id, status, delay, message) {
 			return confirm(id, status, delay, message);
 		},
@@ -422,9 +409,6 @@ var automation = function() {
 		},
 		globalHTACCESSWarning: function() { 
 			return translate("htaccessWarning");
-		},
-		launchItemModal: function(body) {
-			return launchItemModal(body);
 		},
 		omitKeys: function(obj, keys) {
 			return omitKeys(obj, keys);

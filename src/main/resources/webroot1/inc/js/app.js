@@ -10,32 +10,16 @@ var app = Vue.createApp({
 	// } ,
 	setup() {
 
-		const homeLabel = Vue.ref('home');
-		const advancedLabel = Vue.ref('advanced');
-		const sensorsLabel = Vue.ref('sensors');
-		const adminLabel = Vue.ref('admin');
-		const itemsLabel = Vue.ref('items');
-		const carefulLabel = Vue.ref('careful');
-		const disableLabel = Vue.ref('disable');
-		const closeLabel = Vue.ref('close');
-		const logsActionsLabel = Vue.ref('logs_actions');
-		const logsSensorsLabel = Vue.ref('logs_sensors');
-		const logsExceptionsLabel = Vue.ref('logs_exceptions');
 		const showCheckLog = Vue.ref(false)
 		const itemsPerPage = Vue.ref(100)
+		const refresher = Vue.ref(true)
+
+		const translate = function(code) {
+			return automation.translate(code)
+		}
 
 		const translateAll = function() {
-			homeLabel.value = automation.translate('homepage');
-			advancedLabel.value = automation.translate('advanced');
-			sensorsLabel.value = automation.translate('sensors');
-			adminLabel.value = automation.translate('admin');
-			itemsLabel.value = automation.translate('items');
-			carefulLabel.value = automation.translate('careful');
-			disableLabel.value = automation.translate('disable');
-			closeLabel.value = automation.translate('close');
-			logsActionsLabel.value = automation.translate('logs_actions');
-			logsSensorsLabel.value = automation.translate('logs_sensors');
-			logsExceptionsLabel.value = automation.translate('logs_exceptions');
+			refresher.value = !refresher.value
 		}
 
 		// const isCompactView = Vue.ref(false)
@@ -120,19 +104,10 @@ var app = Vue.createApp({
 		showCheckLog.value = automation.pageFlag('timeDifferenceDetected')
 
 		return {
-			homeLabel,
-			advancedLabel,
-			sensorsLabel,
-			adminLabel,
-			itemsLabel,
-			carefulLabel,
-			disableLabel,
-			closeLabel,
-			logsActionsLabel,
-			logsSensorsLabel,
-			logsExceptionsLabel,
 			showCheckLog,
-			itemsPerPage
+			itemsPerPage,
+			refresher,
+			translate
 		}
 	},
 	created: function() {

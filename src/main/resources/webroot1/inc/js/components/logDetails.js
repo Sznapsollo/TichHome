@@ -16,7 +16,7 @@ app.component('log-details', {
 								<a class="fakeLink" style="cursor: pointer;" v-if="!dataLoading" v-on:click="checkLogDetails()">Refresh</a>
 								<i v-if="dataLoading" class="fa fa-cog fa-spin"></i>
 								&nbsp;|&nbsp;
-								<input type="text" style="width: 100px" v-model="searchQuery" :placeholder="[[searchLabel]]" class="form-control" >
+								<input type="text" style="width: 100px" v-model="searchQuery" :placeholder="[[translate('search')]]" class="form-control" >
 								<span v-if="dropdownItemsData.length > 0" >
 									&nbsp;|&nbsp;
 									<select name="dropdownOptions" id="dropdownOptions" v-model="dropdownItemsSelected" class="form-control">
@@ -37,22 +37,22 @@ app.component('log-details', {
 					</p>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{closeLabel}}</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{translate('close')}}</button>
 				</div>
 			</div>
 		</div>
+		<div style="display: none">{{refresher}}</div>
 	</div>`,
 	setup(props, context) {
 		
 		const orderByType = Vue.ref(true);
 		const dropdownItemsData = Vue.ref([]);
-		const searchLabel = Vue.ref('search')
-		const closeLabel = Vue.ref('close');
 		const dataLoading = Vue.ref(false)
 		const searchQuery = Vue.ref(null)
 		const dropdownItemsSelected = Vue.ref(null)
 		const header = Vue.ref('')
 		const logDetailsFilteredLines = Vue.ref([])
+		const refresher = Vue.ref(true)
 
 		let logContentLines = []
 		let logType = null
@@ -110,11 +110,14 @@ app.component('log-details', {
 			);
 		};
 
-		const translateAll = function() {
-			searchLabel.value = automation.translate('search');
-			closeLabel.value = automation.translate('close');
+		const translate = function(code) {
+			return automation.translate(code)
 		}
 
+		const translateAll = function() {
+			refresher.value = !refresher.value
+		}
+		
 		function init() {
 			var filterDropdownValues = automation.pageFlag("logsDropdownFilter");
 			if(filterDropdownValues) {
@@ -157,15 +160,15 @@ app.component('log-details', {
 
 		return {
 			checkLogDetails,
-			closeLabel,
 			dataLoading,
 			dropdownItemsData,
 			dropdownItemsSelected,
 			header,
 			logDetailsFilteredLines,
 			orderByType,
-			searchLabel,
-			searchQuery
+			searchQuery,
+			refresher,
+			translate
 		}
 	}
 });

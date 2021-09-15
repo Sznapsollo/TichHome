@@ -6,30 +6,26 @@ app.component('hours-and-minutes', {
 		<span v-if="!showDate && delayValue >= 0 && delayValue < 60 ">{{$filters.formatNumber(delayValue%60)}}m&nbsp;</span>
 		<span v-if="showDate && delayValue < 60 ">{{$filters.formatNumber(delayValue%60)}}m&nbsp;</span>
 		
-		<span v-if="delayValue == 0">{{defaultDelayLabel}}&nbsp;</span>
+		<span v-if="delayValue == 0">{{translate('default_delay')}}&nbsp;</span>
 		
 		<span v-if="!showDate && delayValue < 0">--&nbsp;</span>
-		<span v-if="showDate && delayValue < 0">{{noDelayLabel}}&nbsp;</span>
+		<span v-if="showDate && delayValue < 0">{{translate('no_delay')}}&nbsp;</span>
 		
-		<span v-if="showDate">&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#" style="cursor: pointer" v-on:click="onDelayedDisableClicked()">{{disableAtLabel}}&nbsp;{{$filters.formatDate(calculatedTime, 'HH:mm')}}</a>
+		<span v-if="showDate">&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#" style="cursor: pointer" v-on:click="onDelayedDisableClicked()">{{translate('disable_at')}}&nbsp;{{$filters.formatDate(calculatedTime, 'HH:mm')}}</a>
+
+		<div style="display: none">{{refresher}}</div>
 	</div>
 	`,
 	setup(props, context) {
 
+		const refresher = Vue.ref(true)
 
-		// delayValue: '=',
-		// showDate: '@',
-		// calculatedTime: '=',
-		// onDelayedDisableClicked:'&'
-
-		const defaultDelayLabel = Vue.ref('default_delay')
-		const noDelayLabel = Vue.ref('no_delay')
-		const disableAtLabel = Vue.ref('disable_at')
+		const translate = function(code) {
+			return automation.translate(code)
+		}
 
 		const translateAll = function() {
-			defaultDelayLabel.value = automation.translate('default_delay');
-			noDelayLabel.value = automation.translate('no_delay')
-			disableAtLabel.value = automation.translate('disable_at')
+			refresher.value = !refresher.value
 		}
 
 		const onDelayedDisableClicked = function() {
@@ -55,12 +51,11 @@ app.component('hours-and-minutes', {
 		translateAll() 
 
 		return {
-			defaultDelayLabel,
-			disableAtLabel,
 			getTime,
 			mathFloor,
-			noDelayLabel,
-			onDelayedDisableClicked
+			onDelayedDisableClicked,
+			refresher,
+			translate
 		}
 	}
 })
