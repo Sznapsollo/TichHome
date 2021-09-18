@@ -388,7 +388,12 @@ class Server extends AbstractVerticle {
 			def items = itemCheckerService.getItems(incomingData.category);
 		
 			items.each { item ->
-				def defaultDelayValue = item.getProp('delay') ? (item.getProp('delay') < 0 ? -1 : Math.ceil(item.getProp('delay')/60)) : null;
+				def defaultDelayValue = item.getProp('delay') ?: null
+				if(defaultDelayValue instanceof String) {
+					defaultDelayValue = Integer.parseInt(defaultDelayValue)
+				}
+				defaultDelayValue = defaultDelayValue != null ? (defaultDelayValue < 0 ? -1 : Math.ceil(defaultDelayValue/60)) : null;
+
 				if(item instanceof ItemCheckerService.IntItem)
 				{
 					returnData.items << [
@@ -572,6 +577,10 @@ class Server extends AbstractVerticle {
 		def incomingDataItem = (new JsonObject(incomingData?.item)).mapTo(Map.class);
 		if(incomingDataItem?.name == null || incomingDataItem?.header == null || incomingDataItem?.category == null || incomingDataItem?.__processAction == null) {
 			throw new Exception((("Incorrect setItemData args ${incomingDataItem}").toString()))
+		}
+
+		if(incomingDataItem.delay != null && incomingDataItem.delay instanceof String) {
+			incomingDataItem.delay = Integer.parseInt(incomingDataItem.delay)
 		}
 
 		def nodesMap

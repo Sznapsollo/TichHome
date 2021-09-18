@@ -7,7 +7,7 @@ const ManageItemList = {
 				{{warning}}
 			</div>
 			<manage-item></manage-item>
-			<div v-for="(item, index) in data.items">
+			<div v-for="(item, index) in items">
 				<manage-item v-bind:id="item.id" v-bind:header="item.header" v-bind:icon="item.icon" v-bind:image="item.image" v-bind:enabled="item.enabled" ></manage-item>
 			</div>
 			<p>&nbsp;</p>
@@ -20,6 +20,7 @@ const ManageItemList = {
 	
 			console.log('manageItemsList created')
 			const data = Vue.ref({})
+			const items = Vue.ref([])
 			const dataLoading = Vue.ref(true)
 			const warning = Vue.ref('')
 			const refresher = Vue.ref(true)
@@ -51,6 +52,7 @@ const ManageItemList = {
 						dataLoading.value = false
 						if(data.message == 'ok') {
 							data.value = data.data
+							items.value = data.data.items
 							if(data.data.itemsDictionary) {
 								automation.setItemsDictionary(data.data.itemsDictionary);
 							}
@@ -66,9 +68,9 @@ const ManageItemList = {
 
 			Vue.onMounted(function() {
 				prepareListData()
-			})
-
-			Vue.onMounted(function() {
+				window.mittEmitter.on('refreshTab', function(data){
+					prepareListData()
+				});
 				window.mittEmitter.on('translationsReceived', function(item){
 					translateAll()
 				}); 
@@ -79,6 +81,7 @@ const ManageItemList = {
 			return {
 				dataLoading,
 				data,
+				items,
 				refresher,
 				translate,
 				warning

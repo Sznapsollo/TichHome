@@ -59,6 +59,9 @@ const SwitchItemsTab = {
 
 		Vue.onMounted(function() {
 			prepareListData()
+			window.mittEmitter.on('refreshTab', function(data){
+				prepareListData()
+			});
 		})
 
 		Vue.watch(

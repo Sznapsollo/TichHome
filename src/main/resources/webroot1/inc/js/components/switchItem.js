@@ -2,7 +2,7 @@ app.component('switch-item', {
 	props: ['index', 'item'],
 	template: `
 	<div class="powerswitch">
-		<i v-if="icon" class="{{icon}}"></i>
+		<i v-if="icon" :class="icon"></i>
 		<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':delay}" v-on:click="toggleSliderOptions()" v-bind:src="'graphics/icons/' + image" />
 		<span class="switchHeader" v-bind:class="{'switchHeaderClickable':delay}" v-on:click="toggleSliderOptions()">{{header}}</span>
 		<button v-if="showTimer" v-on:click="toggleSliderOptions()" type="button" class="btn btn-sm closeSubSectionButton" >

@@ -2,7 +2,7 @@ app.component('manage-item', {
 	props: ['id', 'header', 'icon', 'enabled', 'image'],
 	template: `	
 	<div class="powerswitch" v-bind:class="{'turnedOff': !enabled && id}">
-		<i v-if="icon" class="{{icon}}"></i>
+		<i v-if="icon" :class="icon"></i>
 		<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':true}" v-on:click="openItemFormModal()" v-bind:src="'graphics/icons/' + image" />
 		<span v-if="id" class="switchHeader" v-bind:class="{'switchHeaderClickable':true}" v-on:click="openItemFormModal()">{{header}}</span>
 		<span v-if="!id" class="switchHeader" v-bind:class="{'switchHeaderClickable':true}" v-on:click="openItemFormModal()">{{translate('itemAddNewItem')}}</span>

@@ -60,6 +60,7 @@ function showErrorMessage(message) {
 }
 
 var appName = 'tichhome'
+var defaultSystemErrorMessage = "--- ERROR ---"
 var globalEventBus
 var globalPingTimer
 function initializeEventBus() {
@@ -373,7 +374,7 @@ var automation = function() {
 	    $('#confirmModal').modal('show');
 	}
 	
-	function OmitKeys(obj, keys)
+	function omitKeys(obj, keys)
 	{
 		var dup = {};
 		for (var key in obj) {
