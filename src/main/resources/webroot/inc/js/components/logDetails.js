@@ -134,7 +134,7 @@ app.component('log-details', {
 
 			searchQuery.value = null
 			dropdownItemsSelected.value = null
-			orderByType.value = true
+			orderByType.value = false
 
 			checkLogDetails();
 		}

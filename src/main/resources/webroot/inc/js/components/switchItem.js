@@ -1,65 +1,67 @@
 app.component('switch-item', {
 	props: ['index', 'item'],
 	template: `
-	<div class="powerswitch">
-		<i v-if="icon" :class="icon"></i>
-		<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':delay}" v-on:click="toggleSliderOptions()" v-bind:src="'graphics/icons/' + image" />
-		<span class="switchHeader" v-bind:class="{'switchHeaderClickable':delay}" v-on:click="toggleSliderOptions()">{{header}}</span>
-		<button v-if="showTimer" v-on:click="toggleSliderOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
-			<i class="fa fa-close"></i>
-		</button>
-		<img v-if="boolValue(regularActions)" class="switchCalendarIcon" v-on:click="toggleRegularOptions()" v-bind:src="'graphics/' + calendarIconName" />
-		<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
-			<i class="fa fa-close"></i>
-		</button>
-		<span class="machineAvailability" v-if="itemSubType == 'M'" v-on:click="checkAvailability()">
-			<span v-if="machineAvailability == null">{{translate('availability_not_checked')}}</span>
-			<span v-if="machineAvailability" style="color:green">{{translate('availability_available')}}</span>
-			<span v-if="machineAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
-		</span>
-		<div class="numberPicker" v-if="delay">
-			<input v-if="showTimer" type="number" v-model="delayValue" v-on:change="changeTimer(delayValue)" min="{{minSliderValue}}" max="{{maxSliderValue}}"  class="form-control" data-min="0" />
-			<hours-and-minutes v-on:click="toggleSliderOptions()" class="timerNormal" v-if="!showTimer" v-bind:delayValue="delayValue"></hours-and-minutes>
+	<div v-if="isEnabled">
+		<div class="powerswitch">
+			<i v-if="icon" :class="icon"></i>
+			<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':delay}" v-on:click="toggleSliderOptions()" v-bind:src="'graphics/icons/' + image" />
+			<span class="switchHeader" v-bind:class="{'switchHeaderClickable':delay}" v-on:click="toggleSliderOptions()">{{header}}</span>
+			<button v-if="showTimer" v-on:click="toggleSliderOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
+				<i class="fa fa-close"></i>
+			</button>
+			<img v-if="boolValue(regularActions)" class="switchCalendarIcon" v-on:click="toggleRegularOptions()" v-bind:src="'graphics/' + calendarIconName" />
+			<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
+				<i class="fa fa-close"></i>
+			</button>
+			<span class="machineAvailability" v-if="itemSubType == 'M'" v-on:click="checkAvailability()">
+				<span v-if="machineAvailability == null">{{translate('availability_not_checked')}}</span>
+				<span v-if="machineAvailability" style="color:green">{{translate('availability_available')}}</span>
+				<span v-if="machineAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
+			</span>
+			<div class="numberPicker" v-if="delay">
+				<input v-if="showTimer" type="number" v-model="delayValue" v-on:change="changeTimer(delayValue)" min="{{minSliderValue}}" max="{{maxSliderValue}}"  class="form-control" data-min="0" />
+				<hours-and-minutes v-on:click="toggleSliderOptions()" class="timerNormal" v-if="!showTimer" v-bind:delayValue="delayValue"></hours-and-minutes>
+			</div>
 		</div>
-	</div>
-	<div v-if="relatedItems && relatedItems.length" class="relatedItems">
-		{{relatedItems ? relatedItems.join(', ') : ''}}
-	</div>
-	<div v-bind:class="{'sub-section': showRegular || showTimer}">
+		<div v-if="relatedItems && relatedItems.length" class="relatedItems">
+			{{relatedItems ? relatedItems.join(', ') : ''}}
+		</div>
+		<div v-bind:class="{'sub-section': showRegular || showTimer}">
 
-		<regular-settings v-if="showRegular" v-bind:outletId="outletId" v-bind:regularActionData="regularActionData" v-on:onSaveRegularSettings="saveRegularSettings" v-bind:randomEnabled="true" ></regular-settings>
+			<regular-settings v-if="showRegular" v-bind:outletId="outletId" v-bind:regularActionData="regularActionData" v-on:onSaveRegularSettings="saveRegularSettings" v-bind:randomEnabled="true" ></regular-settings>
 
-		<hours-and-minutes class="timerChoice" v-if="showTimer" v-bind:calculatedTime="calculatedTime" v-bind:showDate="true" v-bind:delayValue="delayValue" v-on:onDelayedDisableClicked="delayedDisableClicked"></hours-and-minutes>
-		<div v-if="showTimer" class="input-group">
-			<span class="input-group-btn">
-				<button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="changeValue(-1)">
-					<i class="fa fa-arrow-left"></i>
-				</button>
-			</span>
-			<span class="input-group-btn">
-				&nbsp;
-			</span>
-			<input type="range" min="{{minSliderValue}}" max="{{maxSliderValue}}" v-model="delayValue" v-on:-change="changeTimer(delayValue)" class="form-range form-control formRangeSlider" style="float: left;" />
-			<span class="input-group-btn">
-				&nbsp;
-			</span>
-			<span class="input-group-btn">
-				<button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="changeValue(1)">
-					<i class="fa fa-arrow-right"></i>
-				</button>
-			</span>
-			<p>&nbsp;</p>
+			<hours-and-minutes class="timerChoice" v-if="showTimer" v-bind:calculatedTime="calculatedTime" v-bind:showDate="true" v-bind:delayValue="delayValue" v-on:onDelayedDisableClicked="delayedDisableClicked"></hours-and-minutes>
+			<div v-if="showTimer" class="input-group">
+				<span class="input-group-btn">
+					<button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="changeValue(-1)">
+						<i class="fa fa-arrow-left"></i>
+					</button>
+				</span>
+				<span class="input-group-btn">
+					&nbsp;
+				</span>
+				<input type="range" min="{{minSliderValue}}" max="{{maxSliderValue}}" v-model="delayValue" v-on:-change="changeTimer(delayValue)" class="form-range form-control formRangeSlider" style="float: left;" />
+				<span class="input-group-btn">
+					&nbsp;
+				</span>
+				<span class="input-group-btn">
+					<button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="changeValue(1)">
+						<i class="fa fa-arrow-right"></i>
+					</button>
+				</span>
+				<p>&nbsp;</p>
+			</div>
 		</div>
+		<div class="powerswitchbuttons btn-group d-flex"  aria-label="...">
+			<div class="btn-group w-100" role="group" v-if="boolValue(enableOn)">
+				<button :disabled="busy" type="button" class="btn btn-default btn-lg btn-success w-100" v-on:click="clickButton({'outletId':outletId,'status':'on','delay':delayValue*60})" v-bind:class="{'turnedOff':!isActive('pin2',1), 'btn-info': questionOn}">{{translate('enable')}}<span class="timerNormal" v-if="showTimer">&nbsp;({{translate('disable_at')}}&nbsp;{{$filters.formatDate(calculatedTime, 'HH:mm')}})</span></button>
+			</div>
+			<div class="btn-group w-100" role="group"  v-if="boolValue(enableOff)">
+				<button  :disabled="busy" type="button" class="btn btn-default btn-lg w-100" v-on:click="clickButton({'outletId':outletId,'status':'off'})" v-bind:class="{'turnedOff':!isActive('pin2',0), 'btn-danger': questionOff, 'btn-disable': !questionOff}"><span v-if="!timeEnd">{{translate('disable')}}</span><span v-if="timeEnd"><span class="timeOff"><span class="timeEnd">{{$filters.formatDate(timeEnd, 'HH:mm:ss')}}</span> (<span class="disableDate">{{$filters.formatDate(disableDate, 'HH:mm')}}</span>)</span></span></button>
+			</div>
+		</div>
+		<div style="display: none">{{refresher}}</div>
 	</div>
-	<div class="powerswitchbuttons btn-group d-flex"  aria-label="...">
-		<div class="btn-group w-100" role="group" v-if="boolValue(enableOn)">
-			<button :disabled="busy" type="button" class="btn btn-default btn-lg btn-success w-100" v-on:click="clickButton({'outletId':outletId,'status':'on','delay':delayValue*60})" v-bind:class="{'turnedOff':!isActive('pin2',1), 'btn-info': questionOn}">{{translate('enable')}}<span class="timerNormal" v-if="showTimer">&nbsp;({{translate('disable_at')}}&nbsp;{{$filters.formatDate(calculatedTime, 'HH:mm')}})</span></button>
-		</div>
-		<div class="btn-group w-100" role="group"  v-if="boolValue(enableOff)">
-			<button  :disabled="busy" type="button" class="btn btn-default btn-lg w-100" v-on:click="clickButton({'outletId':outletId,'status':'off'})" v-bind:class="{'turnedOff':!isActive('pin2',0), 'btn-danger': questionOff, 'btn-disable': !questionOff}"><span v-if="!timeEnd">{{translate('disable')}}</span><span v-if="timeEnd"><span class="timeOff"><span class="timeEnd">{{$filters.formatDate(timeEnd, 'HH:mm:ss')}}</span> (<span class="disableDate">{{$filters.formatDate(disableDate, 'HH:mm')}}</span>)</span></span></button>
-		</div>
-	</div>
-	<div style="display: none">{{refresher}}</div>
 	`,
 	setup(props, context) {
 
@@ -97,6 +99,7 @@ app.component('switch-item', {
 		const timeEnd = Vue.ref("");
 		const regularActionData = Vue.ref({});
 		const refresher = Vue.ref(true)
+		const isEnabled = Vue.ref(false)
 
 		var timerCheckData;
 		var timerCountDownDelay;
@@ -278,17 +281,6 @@ app.component('switch-item', {
 				calculatedTime.value =  new Date((new Date()).getTime() + whatDelay*60000);
 		}
 
-		Vue.onMounted(function() {
-			window.mittEmitter.on('translationsReceived', function(item){
-				translateAll()
-			}); 
-		})
-
-		Vue.onBeforeUnmount(function() {
-			clearTimeout(timerCheckData);
-			clearTimeout(timerCountDownDelay);
-		})
-
 		function countDownDelay() {
 			if(disableDate.value == null) {
 				timeEnd.value = "";
@@ -442,9 +434,19 @@ app.component('switch-item', {
 			}); 
 		};
 
-		init()
+		Vue.onMounted(function() {
+			window.mittEmitter.on('translationsReceived', function(item){
+				translateAll()
+			}); 
+			isEnabled.value = automation.boolValue(props.item.enabled)
+			init()
+			translateAll() 
+		})
 
-		translateAll() 
+		Vue.onBeforeUnmount(function() {
+			clearTimeout(timerCheckData);
+			clearTimeout(timerCountDownDelay);
+		})
 
 		return {
 			boolValue,
@@ -468,6 +470,7 @@ app.component('switch-item', {
 			image,
 			initialDelayValue,
 			isActive,
+			isEnabled,
 			itemType,
 			itemSubType,
 			machineAvailability,
