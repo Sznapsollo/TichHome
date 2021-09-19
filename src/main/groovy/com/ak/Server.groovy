@@ -742,6 +742,11 @@ class Server extends AbstractVerticle {
 			helperService.writeFile(settingsService.sensorSettingsFilesPath, fileName, sensorJson)
 		} else if(onDevices) {
 			item.on = onDevices
+			item.on?.each { onItem ->
+				if(onItem.delay != null && onItem.delay instanceof String) {
+					onItem.delay = Integer.parseInt(onItem.delay)
+				}
+			}
 			JsonObject jsonObj = new JsonObject(item);
 			def sensorJson = jsonObj.toString()
 			helperService.writeFile(settingsService.sensorSettingsFilesPath, fileName, sensorJson)
@@ -810,6 +815,11 @@ class Server extends AbstractVerticle {
 			helperService.writeFile(settingsService.sensorSettingsFilesPath, fileName, sensorJson)
 		} else if(onDevices != null) {
 			item.onAlarm = onDevices
+			item.onAlarm?.each { onAlarmItem ->
+				if(onAlarmItem.delay != null && onAlarmItem.delay instanceof String) {
+					onAlarmItem.delay = Integer.parseInt(onAlarmItem.delay)
+				}
+			}
 			JsonObject jsonObj = new JsonObject(item);
 			def sensorJson = jsonObj.toString()
 			helperService.writeFile(settingsService.sensorSettingsFilesPath, fileName, sensorJson)

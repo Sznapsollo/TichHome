@@ -2,6 +2,7 @@ app.component('regular-settings', {
 	props: ['outletId', 'regularActionData', 'randomEnabled'],
 	template: `
 	<div class="regularSettings">
+		<slot></slot>
 		<i v-if="dataLoading" class="fa fa-spinner fa-spin"></i>
 		<div v-for="(timeUnit, index) in timeUnits">
 			<div class="btn-group d-flex"  aria-label="...">
@@ -190,23 +191,7 @@ app.component('regular-settings', {
 			return automation.translate(code);
 		};
 
-		// timeUnits.value = [];
-		
-		// $scope.saveRegularSettings = saveRegularSettings;
-		// $scope.toggleDay = toggleDay;
-		// $scope.isSetDay = isSetDay;
-		// $scope.isSaveEnabled = isSaveEnabled;
-		// $scope.addNew = addNew;
-		// $scope.removeUnit = removeUnit;
-		// $scope.translate = translate;
-		// $scope.dataLoading = true;
-
-		// outletId: '@',
-		// regularActionData: '@',
-		// onRegularSettingsSaved:'&',
-		// randomEnabled:'='
-
-		init()
+		init();
 
 		return {
 			addNew,

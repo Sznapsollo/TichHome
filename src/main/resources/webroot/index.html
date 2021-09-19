@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="automationApp">
+<html>
 
 <head>
 	<meta charset="UTF-8">
@@ -9,135 +9,153 @@
 	<meta name="robots" content="all">
 	<meta name="revisit-after" content="3 days">
 	<meta name="distribution" content="global">
-	<meta name="description" content="AKHomeAutomation - Raspberry Pi based home automation / smart home / smart house solution" />
-	<meta name="keywords" content="AKHomeAutomation,Sznapsollo,home automation" />
-	<meta name="homepage" content="https://github.com/Sznapsollo/AKHomeAutomation">
+	<meta name="description" content="TichHome - Raspberry Pi based home automation / smart home / smart house solution" />
+	<meta name="keywords" content="TichHome,Sznapsollo,home automation" />
+	<meta name="homepage" content="https://github.com/Sznapsollo/TichHome">
   
-  <script type="text/javascript" src="inc/libs/sockjs.min.js"></script>
-  <script type="text/javascript" src='inc/libs/vertx-eventbus.js'></script>
+	<script type="text/javascript" src="inc/js/libraries/sockjs.min.js"></script>
+	<script type="text/javascript" src='inc/js/libraries/vertx-eventbus.js'></script>
 
-	<script src="inc/libs/jquery-3.5.1.min.js"></script>
-	<script src="inc/bootstrap-4.5.0-dist/js/bootstrap.min.js" ></script>
-	<link rel="stylesheet" href="inc/bootstrap-4.5.0-dist/css/bootstrap.min.css" >
-	<link rel="stylesheet" href="inc/font-awesome-4.3.0/css/font-awesome.min.css" >
-	<link rel="stylesheet" href="inc/css/cascade.css">
+	<script type="text/javascript" src="inc/js/libraries/moment.min.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/vue_3.0.2.global.prod.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/vue-router.global_4_0_8.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/axios.min.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/mitt.umd.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/lodash.min.js"></script>
+	<script type="text/javascript" src="inc/js/scripts.js" ></script>
+
+	<link rel="stylesheet" href="inc/bootstrap-5.0.0-dist/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="inc/css/font-awesome-4.3.0/css/font-awesome.min.css" >
+	<link rel="stylesheet" href="inc/css/styles.css" >
+
 	<link rel="icon" href="graphics/favicon.ico" type="image/x-icon">
 
-	<script src="inc/libs/angular.min.js"></script>
-	<script src="inc/libs/angular-route.min.js"></script>
-	
-	<script src="inc/js/app.js"></script>
-	<script src="inc/js/directives/general.js"></script>
-	<script src="inc/js/controllers/generalController.js"></script>
-	<script src="inc/js/controllers/tabController.js"></script>
-	<script src="inc/js/controllers/rfButtonsController.js"></script>
-	<script src="inc/js/controllers/itemFormController.js"></script>
-	<script src="inc/js/controllers/manageItemController.js"></script>
-	<script src="inc/js/controllers/sensorItemController.js"></script>
-	<script src="inc/js/controllers/sensorDevicesSettingsController.js"></script>
-	<script src="inc/js/controllers/sensorAlarmSettingsController.js"></script>
-	<script src="inc/js/controllers/regularSettingsController.js"></script>
-	<script src="inc/js/controllers/hoursAndMinutesController.js"></script>
-	<script src="inc/js/controllers/logsListController.js"></script>
-	<script src="inc/js/controllers/logDetailsController.js"></script>
-	<script src="inc/js/controllers/pagerController.js"></script>
-	<script src="inc/js/services/general.js"></script>
-	<script src="inc/js/filters/general.js"></script>
-	<script src="inc/js/skrypty.js"></script>
-
-	<title>AKHomeAutomation</title>
+	<title>Tich Home</title>
 </head>
 
-<body id="bodyContainer" ng-controller="GeneralController">
-	<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
-		<a class="navbar-brand" href=".">{{homeLabel}}</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarAutomation" aria-controls="navbarAutomation" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse justify-content-stretch" id="navbarAutomation">
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item" ng-class="{active: currentFromValue == 'advanced'}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" href="#/advanced">{{advancedLabel}}</a></li>
-				<li class="nav-item dropdown" ng-class="{active: currentFromValue == 'sensors' || currentFromValue == 'manageitems'}">
-					<a class="nav-link dropdown-toggle" id="adminOptions" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-						{{adminLabel}}
-					</a>
-					<div class="dropdown-menu" aria-labelledby="adminOptions">
-						<a data-toggle="collapse" data-target="#navbarAutomation" class="dropdown-item" href="#/manageitems">{{itemsLabel}}</a>
-						<a data-toggle="collapse" data-target="#navbarAutomation" class="dropdown-item" href="#/sensors">{{sensorsLabel}}</a>
-					</div>
-				</li>
-				<li class="nav-item" ng-class="{active: currentPath.indexOf('logsList/actions') >= 0}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" href="#/logsList/actions/0/{{itemsPerPage}}">{{logsActionsLabel}}</a></li>
-				<li class="nav-item"  ng-class="{active: currentPath.indexOf('logsList/sensors') >= 0}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" href="#/logsList/sensors/0/{{itemsPerPage}}">{{logsSensorsLabel}}</a></li>
-				<li class="nav-item" ng-class="{active: currentPath.indexOf('logsList/exceptions') >= 0}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" ng-class="{redBlinker: pageFlag('todayexcexists')}" href="#/logsList/exceptions/0/{{itemsPerPage}}">{{logsExceptionsLabel}}</a></li>
-			</ul>
-			<span ng-if="pageFlag('timeDifferenceDetected')" class="navbar-text redBlinker">
-				Check Log
-			</span>
-		</div>
-	</nav>
-	
-	<p style="height: 70px"></p>
-	
-	<div class="container" id="mainContainer">
-		<ng-view></ng-view>
-	</div>
+<body>
+	<div id="app" >
+		<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
 
-	<div class="alert alert-success customAlert" style="z-index: 2001" id="success-alert">
-		<button type="button" class="close" data-hide="alert">x</button>
-		<span class="alert-text"></span>
-	</div>
-	
-	<div class="alert alert-danger customAlert" style="z-index: 2002" id="danger-alert">
-		<button type="button" class="close" data-hide="alert">x</button>
-		<span class="alert-text"></span>
-	</div>
-
-	<div id="deleteModal" role="dialog" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">{{carefulLabel}}</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
+			<div class="container-fluid">
+				<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+					<router-link :to="{ name: 'switchItemsTab', params: {category: 'general'} }" class="navbar-brand" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'general' }">{{translate('homepage')}}</router-link>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTichHome" aria-controls="navbarTichHome" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
 					</button>
+				</div>
+				<div class="mx-auto order-0">
+
+				</div>
+				<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+					<ul class="navbar-nav ms-auto">
+						<li class="nav-item" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'advanced' }">
+							<router-link :to="{ name: 'switchItemsTab', params: {category: 'advanced'} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('advanced')}}</router-link>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								{{translate('admin')}}
+							</a>
+							<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarScrollingDropdown">
+								<li>
+									<router-link :to="{ name: 'manageItemList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='manageItemList'}">{{translate('items')}}</router-link>
+								</li>
+								<li>
+									<router-link :to="{ name: 'sensorList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='sensorList'}">{{translate('sensors')}}</router-link>
+								</li>
+							</ul>
+						</li>
+						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'actions' }">
+							<router-link :to="{ name: 'logList', params: {logType: 'actions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_actions')}}</router-link>
+						</li>
+						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'sensors' }">
+							<router-link :to="{ name: 'logList', params: {logType: 'sensors', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_sensors')}}</router-link>
+						</li>
+						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'exceptions' }">
+							<router-link :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_exceptions')}}</router-link>
+						</li>
+					</ul>
+					<span v-if="showCheckLog" class="navbar-text redBlinker">
+						Check Log
+					</span>
+				</div>
+			</div>
+		  </nav>
+
+		  <p style="height: 70px"></p>
+	
+		<div class="container">
+			<router-view></router-view>
+		</div>
+
+		  <!-- <keep-alive>
+			<router-view v-slot="{ Component }">
+				<transition>
+					<keep-alive>
+					<component :is="Component" />
+					</keep-alive>
+				</transition>
+			</router-view>
+		</keep-alive> -->
+
+		<div class="alert alert-success customAlert" style="z-index: 2001" id="success-alert">
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			<span class="alert-text"></span>
+		</div>
+		
+		<div class="alert alert-danger customAlert" style="z-index: 2002" id="danger-alert">
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			<span class="alert-text"></span>
+		</div>
+
+		<div id="confirmModal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title">{{translate('careful')}}</h5>
+				  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 					<p class="confirmMessage"></p>
 					<button type="button" class="btn btn-default btn-lg btn-warning toggleOutlet confirmTrigger"></button>
 				</div>
 				<div class="modal-footer">
-					<button type="button" data-dismiss="modal" class="btn btn-default">{{closeLabel}}</button>
+				  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{translate('close')}}</button>
 				</div>
+			  </div>
 			</div>
 		</div>
+
+		<item-modal></item-modal>
+		<log-details></log-details>
+		
+		<div style="display: none">{{refresher}}</div>
 	</div>
 
-	<div id="modalDialog" role="dialog" class="modal fade">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title"></h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p class="modal-body-p"></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" data-dismiss="modal" class="btn btn-default">{{closeLabel}}</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div id="modalItemDialog" role="dialog" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				
-			</div>
-		</div>
-	</div>
+	<script type="text/javascript" src="inc/js/app.js" ></script>
+	<script type="text/javascript" src="inc/js/components/switchItemsTab.js"></script>
+	<script type="text/javascript" src="inc/js/components/switchItem.js"></script>
+	<script type="text/javascript" src="inc/js/components/hoursAndMinutes.js"></script>
+	<script type="text/javascript" src="inc/js/components/regularSettings.js"></script>
+	<script type="text/javascript" src="inc/js/components/itemModal.js"></script>
+	<script type="text/javascript" src="inc/js/components/logDetails.js"></script>
+	<script type="text/javascript" src="inc/js/components/logList.js"></script>
+	<script type="text/javascript" src="inc/js/components/pager.js"></script>
+	<script type="text/javascript" src="inc/js/components/sensorAlarmSettings.js"></script>
+	<script type="text/javascript" src="inc/js/components/sensorAlarmDevicesSettings.js"></script>
+	<script type="text/javascript" src="inc/js/components/sensorDevicesSettings.js"></script>
+	<script type="text/javascript" src="inc/js/components/sensorList.js"></script>
+	<script type="text/javascript" src="inc/js/components/sensorItem.js"></script>
+	<script type="text/javascript" src="inc/js/components/manageItemList.js"></script>
+	<script type="text/javascript" src="inc/js/components/manageItem.js"></script>
+	<script type="text/javascript" src="inc/bootstrap-5.0.0-dist/js/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="inc/js/services.js" ></script>
+	<script type="text/javascript" src="inc/js/routes.js"></script>
+	<script type="text/javascript">
+		window.mittEmitter = mitt()
+		app.mount('#app')
+	</script>
 </body>
 
 </html>

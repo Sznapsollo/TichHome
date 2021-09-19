@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="automationApp">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<meta name="robots" content="all">
+	<meta name="revisit-after" content="3 days">
+	<meta name="distribution" content="global">
+	<meta name="description" content="AKHomeAutomation - Raspberry Pi based home automation / smart home / smart house solution" />
+	<meta name="keywords" content="AKHomeAutomation,Sznapsollo,home automation" />
+	<meta name="homepage" content="https://github.com/Sznapsollo/AKHomeAutomation">
+  
+  <script type="text/javascript" src="inc/libs/sockjs.min.js"></script>
+  <script type="text/javascript" src='inc/libs/vertx-eventbus.js'></script>
+
+	<script src="inc/libs/jquery-3.5.1.min.js"></script>
+	<script src="inc/bootstrap-4.5.0-dist/js/bootstrap.min.js" ></script>
+	<link rel="stylesheet" href="inc/bootstrap-4.5.0-dist/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="inc/font-awesome-4.3.0/css/font-awesome.min.css" >
+	<link rel="stylesheet" href="inc/css/cascade.css">
+	<link rel="icon" href="graphics/favicon.ico" type="image/x-icon">
+
+	<script src="inc/libs/angular.min.js"></script>
+	<script src="inc/libs/angular-route.min.js"></script>
+	
+	<script src="inc/js/app.js"></script>
+	<script src="inc/js/directives/general.js"></script>
+	<script src="inc/js/controllers/generalController.js"></script>
+	<script src="inc/js/controllers/tabController.js"></script>
+	<script src="inc/js/controllers/rfButtonsController.js"></script>
+	<script src="inc/js/controllers/itemFormController.js"></script>
+	<script src="inc/js/controllers/manageItemController.js"></script>
+	<script src="inc/js/controllers/sensorItemController.js"></script>
+	<script src="inc/js/controllers/sensorDevicesSettingsController.js"></script>
+	<script src="inc/js/controllers/sensorAlarmSettingsController.js"></script>
+	<script src="inc/js/controllers/regularSettingsController.js"></script>
+	<script src="inc/js/controllers/hoursAndMinutesController.js"></script>
+	<script src="inc/js/controllers/logsListController.js"></script>
+	<script src="inc/js/controllers/logDetailsController.js"></script>
+	<script src="inc/js/controllers/pagerController.js"></script>
+	<script src="inc/js/services/general.js"></script>
+	<script src="inc/js/filters/general.js"></script>
+	<script src="inc/js/skrypty.js"></script>
+
+	<title>AKHomeAutomation</title>
+</head>
+
+<body id="bodyContainer" ng-controller="GeneralController">
+	<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+		<a class="navbar-brand" href=".">{{homeLabel}}</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarAutomation" aria-controls="navbarAutomation" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse justify-content-stretch" id="navbarAutomation">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item" ng-class="{active: currentFromValue == 'advanced'}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" href="#/advanced">{{advancedLabel}}</a></li>
+				<li class="nav-item dropdown" ng-class="{active: currentFromValue == 'sensors' || currentFromValue == 'manageitems'}">
+					<a class="nav-link dropdown-toggle" id="adminOptions" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+						{{adminLabel}}
+					</a>
+					<div class="dropdown-menu" aria-labelledby="adminOptions">
+						<a data-toggle="collapse" data-target="#navbarAutomation" class="dropdown-item" href="#/manageitems">{{itemsLabel}}</a>
+						<a data-toggle="collapse" data-target="#navbarAutomation" class="dropdown-item" href="#/sensors">{{sensorsLabel}}</a>
+					</div>
+				</li>
+				<li class="nav-item" ng-class="{active: currentPath.indexOf('logsList/actions') >= 0}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" href="#/logsList/actions/0/{{itemsPerPage}}">{{logsActionsLabel}}</a></li>
+				<li class="nav-item"  ng-class="{active: currentPath.indexOf('logsList/sensors') >= 0}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" href="#/logsList/sensors/0/{{itemsPerPage}}">{{logsSensorsLabel}}</a></li>
+				<li class="nav-item" ng-class="{active: currentPath.indexOf('logsList/exceptions') >= 0}"><a data-toggle="collapse" data-target="#navbarAutomation" class="nav-link" ng-class="{redBlinker: pageFlag('todayexcexists')}" href="#/logsList/exceptions/0/{{itemsPerPage}}">{{logsExceptionsLabel}}</a></li>
+			</ul>
+			<span ng-if="pageFlag('timeDifferenceDetected')" class="navbar-text redBlinker">
+				Check Log
+			</span>
+		</div>
+	</nav>
+	
+	<p style="height: 70px"></p>
+	
+	<div class="container" id="mainContainer">
+		<ng-view></ng-view>
+	</div>
+
+	<div class="alert alert-success customAlert" style="z-index: 2001" id="success-alert">
+		<button type="button" class="close" data-hide="alert">x</button>
+		<span class="alert-text"></span>
+	</div>
+	
+	<div class="alert alert-danger customAlert" style="z-index: 2002" id="danger-alert">
+		<button type="button" class="close" data-hide="alert">x</button>
+		<span class="alert-text"></span>
+	</div>
+
+	<div id="deleteModal" role="dialog" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{carefulLabel}}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p class="confirmMessage"></p>
+					<button type="button" class="btn btn-default btn-lg btn-warning toggleOutlet confirmTrigger"></button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-default">{{closeLabel}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="modalDialog" role="dialog" class="modal fade">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p class="modal-body-p"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-default">{{closeLabel}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="modalItemDialog" role="dialog" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

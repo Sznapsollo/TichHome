@@ -14,10 +14,7 @@ const SwitchItemsTab = {
 		</div>`,
 	setup(props, context) {
 
-		// watch somehow category changes
-		// deafult route
-
-		console.log('itemsList created')
+		// console.log('itemsList created')
 		const switchItems = Vue.ref([])
 		const route = VueRouter.useRoute()
 		const tabCategory = Vue.ref('') 
@@ -33,7 +30,7 @@ const SwitchItemsTab = {
 		}
 
 		const prepareListDataInner = function() {
-			console.log('prepare list data')
+			// console.log('prepare list data')
 			switchItems.value = []
 
 			tabCategory.value = route.params.category ? route.params.category : 'general'
@@ -43,7 +40,7 @@ const SwitchItemsTab = {
 					dataLoading.value = false
 					if(data.message == 'ok') {
 						switchItems.value = data.data.items;
-						console.log('got data', switchItems.value)
+						// console.log('got data', switchItems.value)
 						if(data.data.itemsDictionary) {
 							automation.setItemsDictionary(data.data.itemsDictionary);
 						}
@@ -69,10 +66,6 @@ const SwitchItemsTab = {
 		async newCategory => {
 			prepareListData()
 		})
-
-		// Vue.watch(category, (categoryValue, oldCategoryValue) => {
-		// 	prepareListData()
-		// })
 
 		return {
 			dataLoading,

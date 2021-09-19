@@ -1,3 +1,11 @@
+var versionTichHome = "202109191417"
+
+/* todo
+	- sessions viewer
+	- random calls viewer
+	- correct randomizer
+*/
+
 $(document).ready(function()
 {
 	initializeEventBus()
@@ -81,12 +89,7 @@ function initializeEventBus() {
 			success: function(responseData){
 				registerAKHomeAutomationOnEventBus(responseData.data)        
 			}
-		  })
-
-		// sends XMLHttpRequest
-        // $.post( "actions", {json_string:JSON.stringify(data)},  function( responseData ) {
-        //     registerAKHomeAutomationOnEventBus(responseData.data)        
-        // }, "json");      
+		})    
     }
     globalEventBus.onclose = function() {
         localLogger("Connection to event bus closed. Attempting to reconect", 1)
@@ -116,13 +119,10 @@ function registerAKHomeAutomationOnEventBus(initializeKey) {
                                 window.mittEmitter.emit(message.body.centerName, message.body.data)
 							} else if(message.body.type == 'applicationWarningTextMessage') {
                                 directMessageToProperAlert(message.body)
-                                // if(message.body.reload == true) {
-                                //     $("#confirm-reload").modal('show')
-                                // }
                             } else if(message.body.type == 'refreshPage') {
 								window.location.reload()
 							} else {
-                                // addWarning(message.body.warningType, message.body.data)
+								showErrorMessage(message.body.data)
                             }
                         }
                     }

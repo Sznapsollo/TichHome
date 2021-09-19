@@ -367,6 +367,7 @@ app.component('switch-item', {
 				},
 				function(response) {
 					var error = 'Delay data read error for ' + outletId.value;
+					showErrorMessage(error)
 					console.log(error);
 					console.log(response);
 					disableDate.value = null;
