@@ -1,9 +1,3 @@
-/* todo
-	- sessions viewer
-	- random calls viewer
-	- correct randomizer
-*/
-
 $(document).ready(function()
 {
 	initializeEventBus()

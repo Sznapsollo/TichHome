@@ -221,6 +221,17 @@ class HelperService {
 		}
 	}
 
+	static def manageDelayValue(def delayValue) {
+		if(delayValue != null && delayValue instanceof String) {
+			if(!delayValue) {
+				delayValue = null
+			} else {
+				delayValue = Integer.parseInt(delayValue)	
+			}
+		}
+		return delayValue
+	}
+
 	static def toString(def value) {
 		return ((value ?: '').toString())
 	}

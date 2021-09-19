@@ -389,8 +389,8 @@ class Server extends AbstractVerticle {
 		
 			items.each { item ->
 				def defaultDelayValue = item.getProp('delay') ?: null
-				if(defaultDelayValue instanceof String) {
-					defaultDelayValue = Integer.parseInt(defaultDelayValue)
+				if(defaultDelayValue != null) {
+					defaultDelayValue = HelperService.manageDelayValue(defaultDelayValue)
 				}
 				defaultDelayValue = defaultDelayValue != null ? (defaultDelayValue < 0 ? -1 : Math.ceil(defaultDelayValue/60)) : null;
 
@@ -579,8 +579,8 @@ class Server extends AbstractVerticle {
 			throw new Exception((("Incorrect setItemData args ${incomingDataItem}").toString()))
 		}
 
-		if(incomingDataItem.delay != null && incomingDataItem.delay instanceof String) {
-			incomingDataItem.delay = Integer.parseInt(incomingDataItem.delay)
+		if(incomingDataItem.delay != null) {
+			incomingDataItem.delay = HelperService.manageDelayValue(incomingDataItem.delay)
 		}
 
 		def nodesMap
@@ -743,8 +743,8 @@ class Server extends AbstractVerticle {
 		} else if(onDevices) {
 			item.on = onDevices
 			item.on?.each { onItem ->
-				if(onItem.delay != null && onItem.delay instanceof String) {
-					onItem.delay = Integer.parseInt(onItem.delay)
+				if(onItem.delay != null) {
+					onItem.delay = HelperService.manageDelayValue(onItem.delay)
 				}
 			}
 			JsonObject jsonObj = new JsonObject(item);
@@ -816,8 +816,8 @@ class Server extends AbstractVerticle {
 		} else if(onDevices != null) {
 			item.onAlarm = onDevices
 			item.onAlarm?.each { onAlarmItem ->
-				if(onAlarmItem.delay != null && onAlarmItem.delay instanceof String) {
-					onAlarmItem.delay = Integer.parseInt(onAlarmItem.delay)
+				if(onAlarmItem.delay != null) {
+					onAlarmItem.delay = HelperService.manageDelayValue(onAlarmItem.delay)
 				}
 			}
 			JsonObject jsonObj = new JsonObject(item);

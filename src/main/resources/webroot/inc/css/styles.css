@@ -115,11 +115,11 @@
 }
 
 .logRow:nth-child(odd){
-	background: rgba(0,0,0,0.1);
+	background: #ffffff;
 }
 
 .logRow:nth-child(even){
-	background: #ffffff;
+	background: rgba(0,0,0,0.1);
 }
 
 .redBlinker {

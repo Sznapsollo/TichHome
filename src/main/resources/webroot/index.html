@@ -72,7 +72,7 @@
 							<router-link :to="{ name: 'logList', params: {logType: 'sensors', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_sensors')}}</router-link>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'exceptions' }">
-							<router-link :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_exceptions')}}</router-link>
+							<router-link v-bind:class="{'redBlinker': showCheckExcLog}" :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_exceptions')}}</router-link>
 						</li>
 					</ul>
 					<span v-if="showCheckLog" class="navbar-text redBlinker">

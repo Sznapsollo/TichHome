@@ -61,7 +61,7 @@ var sendActionsData = function(data, callback, failCallback) {
 			if(response && response.data && response.data.message == 'ok') {
 				callback(response.data)
 			} else {
-				var errMsgParts = ['performAction ', id, status]
+				var errMsgParts = ['sendActionsData ']
 				if(response && response.data) {
 					errMsgParts.push(response.data.message ? response.data.message : response.data.data)
 				}

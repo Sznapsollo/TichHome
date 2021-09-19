@@ -1,10 +1,11 @@
 var app = Vue.createApp({
 	setup() {
 
-		const showCheckLog = Vue.ref(false);
 		const itemsPerPage = Vue.ref(100);
 		const refresher = Vue.ref(true);
 		const versionTichHome = Vue.ref('');
+		const showCheckLog = Vue.ref(false);
+		const showCheckExcLog = Vue.ref(false)
 
 		const translate = function(code) {
 			return automation.translate(code);
@@ -20,6 +21,7 @@ var app = Vue.createApp({
 			}); 
 			window.mittEmitter.on('pageFlagsSet', function(item){
 				showCheckLog.value = automation.pageFlag('timeDifferenceDetected')
+				showCheckExcLog.value = automation.pageFlag('todayexcexists')
 			}); 
 			versionTichHome.value = '202109191430';
 			itemsPerPage.value = GetLocalStorage(itemsPerPageStorageName, itemsPerPageDefault);
@@ -29,9 +31,10 @@ var app = Vue.createApp({
 		showCheckLog.value = automation.pageFlag('timeDifferenceDetected')
 
 		return {
-			showCheckLog,
 			itemsPerPage,
 			refresher,
+			showCheckLog,
+			showCheckExcLog,
 			translate,
 			versionTichHome
 		}

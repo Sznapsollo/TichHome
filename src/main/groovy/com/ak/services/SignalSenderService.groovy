@@ -63,8 +63,8 @@ class SignalSenderService {
 		def remoteAddress = incomingData.remoteAddress
 
 		try {
-			if(outletDelayed instanceof String) {
-				outletDelayed = Integer.parseInt(outletDelayed)
+			if(outletDelayed != null) {
+				outletDelayed = HelperService.manageDelayValue(outletDelayed)
 			}
 		} catch(Exception e) {
 			outletDelayed = 0
