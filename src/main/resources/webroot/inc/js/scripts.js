@@ -1,5 +1,3 @@
-var versionTichHome = "202109191417"
-
 /* todo
 	- sessions viewer
 	- random calls viewer
