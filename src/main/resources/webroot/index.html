@@ -38,19 +38,19 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
 
 			<div class="container-fluid">
-				<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+				<div>
 					<router-link :to="{ name: 'switchItemsTab', params: {category: 'general'} }" class="navbar-brand" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'general' }">{{translate('homepage')}}</router-link>
-					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTichHome" aria-controls="navbarTichHome" aria-expanded="false" aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button>
 				</div>
 				<div class="mx-auto order-0">
 
 				</div>
-				<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTichHome" aria-controls="navbarTichHome" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse w-100 order-3 dual-collapse2" id="navbarTichHome">
 					<ul class="navbar-nav ms-auto">
 						<li class="nav-item" v-bind:class="{ active: $route.name=='switchItemsTab' && $route.params.category == 'advanced' }">
-							<router-link :to="{ name: 'switchItemsTab', params: {category: 'advanced'} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('advanced')}}</router-link>
+							<router-link :to="{ name: 'switchItemsTab', params: {category: 'advanced'} }" class="nav-link" >{{translate('advanced')}}</router-link>
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,13 +66,13 @@
 							</ul>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'actions' }">
-							<router-link :to="{ name: 'logList', params: {logType: 'actions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_actions')}}</router-link>
+							<router-link :to="{ name: 'logList', params: {logType: 'actions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" >{{translate('logs_actions')}}</router-link>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'sensors' }">
-							<router-link :to="{ name: 'logList', params: {logType: 'sensors', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_sensors')}}</router-link>
+							<router-link :to="{ name: 'logList', params: {logType: 'sensors', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" >{{translate('logs_sensors')}}</router-link>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'exceptions' }">
-							<router-link v-bind:class="{'redBlinker': showCheckExcLog}" :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" data-toggle="collapse" data-target="#navbarTichHome">{{translate('logs_exceptions')}}</router-link>
+							<router-link v-bind:class="{'redBlinker': showCheckExcLog}" :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" >{{translate('logs_exceptions')}}</router-link>
 						</li>
 					</ul>
 					<span v-if="showCheckLog" class="navbar-text redBlinker">

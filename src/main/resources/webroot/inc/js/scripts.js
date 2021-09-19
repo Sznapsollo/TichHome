@@ -5,6 +5,14 @@ $(document).ready(function()
 	{
 		toggleOutlet($(this));
 	});
+
+	$('.navbar-collapse a').click(function(){
+		let currEl = $(this)
+		if(currEl && currEl.length && currEl[0].classList && currEl[0].classList.contains('dropdown-toggle')) {
+			return
+		}
+		$(".navbar-collapse").collapse('hide');
+	});
 });
 
 var toggleOutlet = function(buttonClicked) {
