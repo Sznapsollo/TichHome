@@ -233,12 +233,12 @@ class Server extends AbstractVerticle {
 					case 'setItemData':
 						result.data = setItemData(incomingData)
 						result.message = 'ok'
-						pushEventBusMessage([path: "applicationMessage/", type: 'nodeChange', message: [name: (("setItemData").toString()), type: 'refreshPage', status: 'OK', data: [:]]])
+						pushEventBusMessage([path: "applicationMessage/", message: [name: (("setItemData").toString()), type: 'refreshPage', status: 'OK', data: [:]]])
 						break;
 					case 'setRegularActionData':
 						result.data = setRegularActionData(incomingData)
 						result.message = 'ok'
-						pushEventBusMessage([path: "applicationMessage/", type: 'nodeChange', message: [name: (("setRegularActionData${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: incomingData?.id]])
+						pushEventBusMessage([path: "applicationMessage/", message: [name: (("setRegularActionData${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: incomingData?.id]])
 						break;
 					case 'setSensorActionData':
 						result.data = setSensorActionData(incomingData)
@@ -303,7 +303,7 @@ class Server extends AbstractVerticle {
 		
 		returnData.returnData = checkDelayData([id: incomingData.outletId])
 		returnData?.notifyIds?.each { notifyIdItem ->
-			pushEventBusMessage([path: "applicationMessage/", type: 'nodeChange', message: [name: (("toogle${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyIdItem]])
+			pushEventBusMessage([path: "applicationMessage/", message: [name: (("toogle${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyIdItem]])
 		}
 
 		return returnData.returnData
@@ -349,6 +349,7 @@ class Server extends AbstractVerticle {
 					returnData.itemsDictionary << [
 						id: item.getProp('name'), 
 						header: item.getProp('header'), 
+						enabled: item.getProp('enabled')
 					]
 				}
 				returnData.folderSecured = false;//isSecured()
@@ -426,6 +427,7 @@ class Server extends AbstractVerticle {
 						hotword: item.getProp('hotword'), 
 						icon: item.getProp('icon'), 
 						image: item.getProp('image'), 
+						delay: defaultDelayValue, 
 						header: item.getProp('header'), 
 						questionOff: item.getProp('questionOff'), 
 						questionOn: item.getProp('questionOn'), 
@@ -1135,7 +1137,7 @@ class Server extends AbstractVerticle {
 	private void pushEventBusMessage(def args = [:]) {
 		def path = args.path 
 		def message = args.message
-		def type = args.type
+
 		// localLogger "pushEventBusMessage ${path}" 
 		// localLogger "pushEventBusMessage ${path} ${message}" 
 		// update no more often than eventBusMessagesDelay s
@@ -1144,12 +1146,12 @@ class Server extends AbstractVerticle {
 		def sendToEventBus = { messageToBeSent ->
 			registeredHandles.each { sessionIdKey, sessionIdValue ->
 
-				def eventBusMessage = new JsonObject(message)
+				def eventBusMessage = new JsonObject(messageToBeSent.message)
 
-				localLogger ("Fire websocket update for ${path}${sessionIdKey} -> ${notificationKey}")
+				localLogger ("Fire websocket update for ${messageToBeSent.path}${sessionIdKey} -> ${notificationKey}")
 				scheduledUpdates[notificationKey] = null
 				def eb = vertx.eventBus()
-				eb.publish(path+sessionIdKey, eventBusMessage)
+				eb.publish(messageToBeSent.path + sessionIdKey, eventBusMessage)
 			}
 		}
 
@@ -1160,7 +1162,7 @@ class Server extends AbstractVerticle {
 				timerData.timerDelayedTimes ++
 				vertx.cancelTimer(timerData.timerId)   
 				if(timerData.timerDelayedTimes > 30) {
-					sendToEventBus(message)
+					sendToEventBus(path: path, message: message)
 					return
 				}
 			}
@@ -1171,10 +1173,11 @@ class Server extends AbstractVerticle {
 			timerDelayedTimes: 0,
 			timerId: (
 				vertx.setTimer(settingsService.eventBusMessagesDelay, { timerId ->
-					sendToEventBus(message)
+					// NJ dummy let first go but next same ones delay	
 				})
 			)
 		] 
+		sendToEventBus([path: path, message: message])
 	}
 		
 	private SockJSHandler eventBusHandler() {

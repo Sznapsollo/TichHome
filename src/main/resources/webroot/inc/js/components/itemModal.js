@@ -132,7 +132,7 @@ app.component('item-modal', {
 								<li class="list-group-item" v-for="(subItem, index) in item.itemIDs_Local">
 									<div class="input-group">
 										<select v-on:change="checkChanges()" v-bind:class="{'invalidInput':subItem.value.length == 0}" class="form-control" name="itemDeviceIDs" v-model="subItem.value" >
-											<option v-for="device in devicesDictionary" v-bind:value="device.id" v-bind:disabled="!isItemSelectable(device.id)">
+											<option v-for="device in devicesDictionary" v-bind:value="device.id" v-bind:disabled="!isItemSelectable(device.id) || !device.enabled || device.id == id">
 												{{ device.header }}
 											</option>
 										</select>
