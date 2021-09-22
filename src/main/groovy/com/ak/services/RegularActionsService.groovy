@@ -77,7 +77,7 @@ class RegularActionsService {
 				def days = timeUnit['daysOfWeek'].split(',').findAll{it != ''}.collect {it.toInteger()}
 
 				if(timeUnit.random) {
-					if(!item.regularActionRandomStart && !item.regularActionRandomEnd) {
+					if(!item.regularActionRandomStart || !item.regularActionRandomEnd) {
 
 						def number1 = getRandomNumberInRange(hourStart.toInteger(), hourEnd.toInteger())
 						def number2 = getRandomNumberInRange(hourStart.toInteger(), hourEnd.toInteger())
@@ -113,7 +113,6 @@ class RegularActionsService {
 						item.regularActionRandomEnd = timeEnd
 						
 						localLogger "------ obtained random start: ${timeStart} end: ${timeEnd} for ${item.getProp('name')}"
-
 					} else {
 						timeStart = item.regularActionRandomStart
 						timeEnd = item.regularActionRandomEnd
@@ -122,10 +121,11 @@ class RegularActionsService {
 					}
 
 					adjustTimeData()
-				} else {
-					item.regularActionRandomStart = null
-					item.regularActionRandomEnd = null
-				}
+				} 
+				// else {
+				// 	item.regularActionRandomStart = null
+				// 	item.regularActionRandomEnd = null
+				// }
 
 				def todayDateTimeStart = new Date().copyWith(
 					year: year, 
@@ -157,6 +157,10 @@ class RegularActionsService {
 					}
 				}
 			}
+
+			// if(item.regularActionRandomStart && item.regularActionRandomEnd){
+			// 	localLogger "${item.getProp('name')} - ${item.regularActionRandomStart} - ${item.regularActionRandomEnd}"
+			// }
 
 			if(actionToPerform == "ON" && item.regularActionStatus != "ON") {
 				localLogger "Scheduled(1) enabling ${item.getProp('name')}"

@@ -214,6 +214,13 @@ class SignalSenderService {
 
 	def disableItem(def item)
 	{
+		if(item.regularActionRandomStart) {
+			item.regularActionRandomStart = null
+		}
+		if(item.regularActionRandomEnd) {
+			item.regularActionRandomEnd = null
+		}
+
 		if(item instanceof ItemCheckerService.WebItem) {
 			disableWebItem(item);
 		} else if(item instanceof ItemCheckerService.ShellItem) {
