@@ -401,37 +401,34 @@ app.component('switch-item', {
 			// instead of this
 			// checkRegularActionData();
 		
-			if(!delay.value) {
-				return;
-			}
-		
-			setDefaultDelay(parseInt(delay.value));
+			if(delay.value != null) {
+				setDefaultDelay(parseInt(delay.value));
 
-			// on the start
-			if(props.item && props.item.delayData) {
-				setupDelayData(props.item.delayData)
-			}
-			// instead of this
-			// checkData();
-
-			// checkInterval(timerCheckData, checkData, 120);
-			checkInterval(timerCountDownDelay, countDownDelay, 1);
-
-			window.mittEmitter.on('checkData', function(data){
-				if(data == 'all' || outletId.value == data) {
-					// console.log('checkData doing it!!')
-					checkData()
+				if(props.item && props.item.delayData) {
+					setupDelayData(props.item.delayData)
 				}
-			}); 
-			window.mittEmitter.on('checkRegularData', function(data){
-				if(data == 'all' || outletId.value == data) {
-					// console.log('checkData doing it!!')
-					if(outletId.value == data) {
-						// console.log('checkRegularData doing it!!')
-						checkRegularActionData()
+				
+				checkInterval(timerCountDownDelay, countDownDelay, 1);
+
+				window.mittEmitter.on('checkData', function(data){
+					if(data == 'all' || outletId.value == data) {
+						// console.log('checkData doing it!!')
+						checkData()
 					}
-				}
-			}); 
+				}); 
+			}
+
+			if(regularActions.value == true) {
+				window.mittEmitter.on('checkRegularData', function(data){
+					if(data == 'all' || outletId.value == data) {
+						// console.log('checkData doing it!!')
+						if(outletId.value == data) {
+							// console.log('checkRegularData doing it!!')
+							checkRegularActionData()
+						}
+					}
+				});
+			}
 		};
 
 		Vue.onMounted(function() {

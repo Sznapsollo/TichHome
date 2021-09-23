@@ -23,7 +23,7 @@ var app = Vue.createApp({
 				showCheckLog.value = automation.pageFlag('timeDifferenceDetected')
 				showCheckExcLog.value = automation.pageFlag('todayexcexists')
 			}); 
-			versionTichHome.value = '202109222150';
+			versionTichHome.value = '202109232000';
 			itemsPerPage.value = GetLocalStorage(itemsPerPageStorageName, itemsPerPageDefault);
 		})
 

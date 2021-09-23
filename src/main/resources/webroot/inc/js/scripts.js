@@ -98,6 +98,9 @@ function initializeEventBus() {
                 initializeEventBus()
             }
         }, 10000);
+
+		// fallback if event bus is down
+		window.mittEmitter.emit('refreshTab', null)
     }
 }
 

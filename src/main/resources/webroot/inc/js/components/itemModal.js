@@ -9,7 +9,7 @@ app.component('item-modal', {
 				</div>
 				<div class="modal-body">
 					<p class="modal-body-p">
-						<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
+						<i v-if="dataLoading" class="fa fa-spinner fa-2x fa-spin"></i>
 						<div class="form-group">
 							<label for="itemName"><strong>{{translate('itemName')}}*</strong>:</label>
 							<input v-on:change="checkChanges()" v-bind:disabled="id != null" v-bind:class="{'invalidInput':invalidName}" class="form-control" name="itemName" type="text" v-model="item.name" />

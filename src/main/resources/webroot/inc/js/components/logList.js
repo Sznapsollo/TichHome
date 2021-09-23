@@ -6,7 +6,7 @@ const LogList = {
 			<a style="cursor: pointer" class="fakeLink" v-bind:class="{'font-weight-bold' : todayFileName == item.name}" v-on:click="getFileContent(item.name)">{{item.name}}</a>
 		</div>
 		
-		<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
+		<i v-if="dataLoading" class="fa fa-spinner fa-2x fa-spin"></i>
 
 		<div v-if="items.length == 0" class="noResults">There are no logs of this type.</div>
 

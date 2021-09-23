@@ -1,8 +1,8 @@
 const SensorList = { 
 	template: `
 	<div class="pageContent">
+		<div v-if="dataLoading" style="position: absolute; width: 100%; text-align: center;"><i class="fa fa-spinner fa-2x fa-spin"></i></div>
 		<h4>{{translate('sensors')}}</h4>
-		<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
 		<div v-for="(item, index) in items">
 			<sensor-item v-bind:outletId="item.id" v-bind:header="item.header" v-bind:timeUnits="item.timeUnits" v-bind:onDevices="item.on" v-bind:customData="item.customData" ></sensor-item>
 		</div>

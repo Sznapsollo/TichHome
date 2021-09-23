@@ -1,7 +1,7 @@
 const SwitchItemsTab = { 
 	props: ['category'],
 	template: `
-		<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
+		<div v-if="dataLoading" style="position: absolute; width: 100%; text-align: center;"><i class="fa fa-spinner fa-2x fa-spin"></i></div>
 		<div class="switchItemsList">
 			<div class="switchItems">
 				<switch-item 
@@ -21,17 +21,20 @@ const SwitchItemsTab = {
 		const dataLoading = Vue.ref(true)
 		
 		let refreshDebounce
-		const prepareListData = function() {
+		const prepareListData = function(clearItems) {
+			clearItems = clearItems != null ? clearItems == true : true
 			clearTimeout(refreshDebounce)
 			refreshDebounce = setTimeout(function() {
 				dataLoading.value = true
-				prepareListDataInner()
+				prepareListDataInner(clearItems)
 			}, 200)
 		}
 
-		const prepareListDataInner = function() {
+		const prepareListDataInner = function(clearItems) {
 			// console.log('prepare list data')
-			switchItems.value = []
+			if(clearItems) {
+				switchItems.value = []
+			}
 
 			tabCategory.value = route.params.category ? route.params.category : 'general'
 			itemsDataService.checkItemsData(tabCategory.value,
@@ -57,7 +60,7 @@ const SwitchItemsTab = {
 		Vue.onMounted(function() {
 			prepareListData()
 			window.mittEmitter.on('refreshTab', function(data){
-				prepareListData()
+				prepareListData(false)
 			});
 		})
 

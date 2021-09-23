@@ -1,8 +1,8 @@
 const ManageItemList = { 
 		template: `
 		<div class="pageContent">
+			<div v-if="dataLoading" style="position: absolute; width: 100%; text-align: center;"><i class="fa fa-spinner fa-2x fa-spin"></i></div>
 			<h4>{{translate('items')}}</h4>
-			<i v-if="dataLoading" class="fa fa-spinner fa-4x fa-spin"></i>
 			<div v-if="!data.folderSecured" class="alert alert-warning" role="alert">
 				{{warning}}
 			</div>

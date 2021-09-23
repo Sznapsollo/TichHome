@@ -238,7 +238,7 @@ class Server extends AbstractVerticle {
 					case 'setRegularActionData':
 						result.data = setRegularActionData(incomingData)
 						result.message = 'ok'
-						pushEventBusMessage([path: "applicationMessage/", message: [name: (("setRegularActionData${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: incomingData?.id]])
+						pushEventBusMessage([path: "applicationMessage/", message: [name: (("${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: incomingData?.id]])
 						break;
 					case 'setSensorActionData':
 						result.data = setSensorActionData(incomingData)
@@ -436,7 +436,8 @@ class Server extends AbstractVerticle {
 						regularActions: item.getProp('regularActions'), 
 						itemSubType: ((item instanceof ItemCheckerService.MacItem) ? "M" : "G"), 
 						enabled: item.getProp('enabled'),
-						relatedItems: relatedItems
+						relatedItems: relatedItems,
+						regularActionData: checkRegularActionData([id: item.getProp('name')])
 					]
 				}
 			}

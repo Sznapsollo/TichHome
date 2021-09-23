@@ -100,6 +100,9 @@ class SignalSenderService {
 
 		if(outletStatus == "on") {
 			if(itemToProcess instanceof ItemCheckerService.GroupItem) {
+				if(shouldLogToggleAction) {
+					logToggleAction([outletLight:outletLight, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
+				}
 				itemToProcess.getProp('itemIDs')?.each { code ->
 					returnData.notifyIds << code
 					def subItemToProcess = itemCheckerService.checkItem(code);
@@ -110,7 +113,7 @@ class SignalSenderService {
 					subItemToProcess.processingSource = outletSource ?: "-";
 					enableItem(subItemToProcess, outletDelayed);
 					if(shouldLogToggleAction) {
-						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
+						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource: 'Group', remoteAddress: remoteAddress])
 					}
 					Thread.sleep(1000);
 				}
@@ -130,6 +133,9 @@ class SignalSenderService {
 		}
 		else if (outletStatus == "off") {
 			if(itemToProcess instanceof ItemCheckerService.GroupItem) {
+				if(shouldLogToggleAction) {
+					logToggleAction([outletLight:outletLight, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
+				}
 				itemToProcess.getProp('itemIDs')?.each { code ->
 					returnData.notifyIds << code
 					def subItemToProcess = itemCheckerService.checkItem(code);
@@ -140,7 +146,7 @@ class SignalSenderService {
 					subItemToProcess.processingSource = outletSource ?: "-";
 					disableItem(subItemToProcess);
 					if(shouldLogToggleAction) {
-						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource:outletSource, remoteAddress: remoteAddress])
+						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource: 'Group', remoteAddress: remoteAddress])
 					}
 					Thread.sleep(1000);
 				}
