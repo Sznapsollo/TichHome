@@ -67,6 +67,68 @@ function showErrorMessage(message) {
 	directMessageToProperAlert({status: 'FAIL', message: message})
 }
 
+function recalcHash(components) {
+    var values = components.map(function (component) { return component.value })
+    return Fingerprint2.x64hash128(values.join(''), 31)
+}
+
+function produceUserIdentifier() {
+    return new Promise((resolve, reject) => {
+        Fingerprint2.get(function (components) {
+            // console.log('Browser hash: ', recalcHash(components))
+            resolve(recalcHash(components))
+        })
+    });
+}
+
+function activeTichSessions() {
+    var data = {type: 'checkTichSessions'}
+    data = JSON.stringify(data)
+	axios.post(('/' + appName + '/actions'), data)
+		.then(function (dataResponse) {
+			if(dataResponse && dataResponse.data && dataResponse.data.message == 'ok') {
+				var amount = dataResponse.data.data ? dataResponse.data.data.length : 0
+				$("#showTextModal").modal('show');
+				$("#showTextModalTitle").html("sessions " + "(" + amount + ")");
+				$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>');
+			} else {
+				var errMsgParts = ['activeTichSessions ']
+				if(dataResponse && dataResponse.data) {
+					errMsgParts.push(dataResponse.data.message ? dataResponse.data.message : dataResponse.data.data)
+				}
+				showErrorMessage(errMsgParts.join(' '));
+			}
+		})
+		.catch(function (error) {
+			showErrorMessage(error)
+		}
+	);
+}
+
+function getTichSessionsHistory() {
+    var data = {type: 'checkTichSessionsHistory'}
+    data = JSON.stringify(data)
+	axios.post(('/' + appName + '/actions'), data)
+		.then(function (dataResponse) {
+			if(dataResponse && dataResponse.data && dataResponse.data.message == 'ok') {
+				var amount = dataResponse.data.data ? dataResponse.data.data.length : 0
+				$("#showTextModal").modal('show');
+				$("#showTextModalTitle").html("sesje HM - historia " + "(" + amount + ")");
+				$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>');
+			} else {
+				var errMsgParts = ['getTichSessionsHistory ']
+				if(dataResponse && dataResponse.data) {
+					errMsgParts.push(dataResponse.data.message ? dataResponse.data.message : dataResponse.data.data)
+				}
+				showErrorMessage(errMsgParts.join(' '));
+			}
+		})
+		.catch(function (error) {
+			showErrorMessage(error)
+		}
+	);
+}
+
 var appName = 'tichhome'
 var defaultSystemErrorMessage = "--- ERROR ---"
 var globalEventBus
@@ -77,19 +139,27 @@ function initializeEventBus() {
     globalEventBus.onopen = function () {
         localLogger("Connection to event bus open", 1)
 
-		var data = {type: 'preinitializeEventBusConnection'}
-        data = JSON.stringify(data)
+		var data = {
+            type: 'preinitializeEventBusConnection',
+            platform: platform
+        }
+		
+		produceUserIdentifier().then(function(userIdentifier) {
+            data.platform.userIdentifier = userIdentifier
+            data = JSON.stringify(data)
+            $.ajax({
+				url:"actions",
+				type:"POST",
+				data:data,
+				contentType:"application/json; charset=utf-8",
+				dataType:"json",
+				success: function(responseData){
+					registerAKHomeAutomationOnEventBus(responseData.data)        
+				}
+			}) 
+        })
 
-		$.ajax({
-			url:"actions",
-			type:"POST",
-			data:data,
-			contentType:"application/json; charset=utf-8",
-			dataType:"json",
-			success: function(responseData){
-				registerAKHomeAutomationOnEventBus(responseData.data)        
-			}
-		})    
+		   
     }
     globalEventBus.onclose = function() {
         localLogger("Connection to event bus closed. Attempting to reconect", 1)

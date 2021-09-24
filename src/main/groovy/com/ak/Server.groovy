@@ -55,7 +55,6 @@ class Server extends AbstractVerticle {
 	private Map scheduledUpdates = [:]
 
 	private def registeredHandles = [:]
-	private def final warningsMinutelyCacheHours = 24
 
 	private LoadingCache<String, Map> shortKeyCache = CacheBuilder.newBuilder()
 		.expireAfterWrite(1, TimeUnit.MINUTES)
@@ -68,28 +67,13 @@ class Server extends AbstractVerticle {
 			}
 		);
 
-	private LoadingCache<String, Map> warningsMinutely = CacheBuilder.newBuilder()
-		//.maximumSize(60)
-		.expireAfterWrite(warningsMinutelyCacheHours, TimeUnit.HOURS)
+	private LoadingCache<String, Map> userSessionsCache = CacheBuilder.newBuilder()
+		.expireAfterWrite(5, TimeUnit.DAYS)
 		.build(
 			new CacheLoader<String, Map>() {
 				public Map load(String key) throws Exception {
-					localLogger('Creating warning minute key ' << key)
-					def cacheWarningsObj = [name: key, entries: []]
-					return cacheWarningsObj;
-				}
-			}
-		);
-
-	private LoadingCache<String, Map> cacheByKeyContainer = CacheBuilder.newBuilder()
-		//.maximumSize(60)
-		.expireAfterWrite(15, TimeUnit.DAYS)
-		.build(
-			new CacheLoader<String, Map>() {
-				public Map load(String key) throws Exception {
-					localLogger('Creating warning key ' << key)
-					def cacheByKeyObj = [name: key, data: [:]]
-					return cacheByKeyObj;
+					localLogger('Creating userSessionCache ' << key)
+					return [:];
 				}
 			}
 		);
@@ -196,9 +180,20 @@ class Server extends AbstractVerticle {
 						result.message = 'ok'
 						break;
 					case 'preinitializeEventBusConnection':
-						def shortLivedKey = helperService.generateRandomKey()
+						if(!incomingData.platform?.userIdentifier) {
+							throw new Exception('cannot register session')
+						}
+						def shortLivedKey = (("${helperService.generateRandomKey()}_${incomingData.platform.userIdentifier}").toString())
 						def userIpEntry = shortKeyCache.get(shortLivedKey)
 						userIpEntry.userRemoteAddress = (("${routingContext.request().remoteAddress()}").toString())
+						userIpEntry.platform = [
+							name: incomingData.platform?.name,
+							version: incomingData.platform?.version,
+							layout: incomingData.platform?.layout,
+							os: incomingData.platform?.os,
+							description: incomingData.platform?.description,
+							userIdentifier: incomingData.platform?.userIdentifier
+						]
 						result.data = shortLivedKey
 						result.message = 'Got remote address ' + result.data
 						break;
@@ -228,6 +223,14 @@ class Server extends AbstractVerticle {
 						break;
 					case 'checkDelayData':
 						result.data = checkDelayData(incomingData)
+						result.message = 'ok'
+						break;
+					case 'checkTichSessions': 
+						result.data = checkTichSessions()						
+						result.message = 'ok'
+						break;
+					case 'checkTichSessionsHistory':
+						result.data = checkTichSessionsHistory()						
 						result.message = 'ok'
 						break;
 					case 'setItemData':
@@ -279,6 +282,40 @@ class Server extends AbstractVerticle {
 		});
 	}
 	
+	private def checkTichSessions() {
+		def returnData = []
+		registeredHandles?.each { key, value ->
+			returnData << [
+				remoteAddress: value.userRemoteAddress,
+				platform: value.platform,
+				activityDate: dateFormat2.format(value.activityDate)
+			]
+		}
+		return returnData
+	}
+
+	private def checkTichSessionsHistory() {
+		def returnData = []
+
+		def userSessionsCacheMap = userSessionsCache.asMap()
+
+		userSessionsCacheMap?.each { sessionKey, sessionValue ->
+			returnData << [
+				remoteAddress: sessionValue.userRemoteAddress,
+				platform: sessionValue.platform,
+				activityDate: dateFormat2.format(sessionValue.activityDate),
+				sessionsHistory: sessionValue.sessionsHistory?.collect { historySessionItem ->
+					def sessionIdSize = historySessionItem.sessionId.size()
+					def maskedSessionId = historySessionItem.sessionId.substring(0, historySessionItem.sessionId.size() - (sessionIdSize - 3))
+					(0..(sessionIdSize - 3)).each {maskedSessionId = maskedSessionId << '*'}
+					return [userName: '---', date: historySessionItem.date, sessionId:  maskedSessionId]
+				},
+			]
+		}
+		returnData.sort { a,b -> b.activityDate <=> a.activityDate}
+		return returnData
+	}
+
 	private def addPageProps(Map propertiesObj) {
 		if(!propertiesObj.pageflags) {
 			propertiesObj.pageflags = [:]
@@ -1047,7 +1084,38 @@ class Server extends AbstractVerticle {
 					return
 				}
 				if(sessionId) {
-					registeredHandles[(sessionId)] = [activityDate: new Date(), userRemoteAddress: userPreinitializeData.userRemoteAddress]
+					if(!userPreinitializeData?.platform?.userIdentifier) {
+						localLogger "ERROR !!!!!!! No userIdentifier in ${userPreinitializeData}"
+						message.reply(new JsonObject([status: 'failure']))
+						return
+					}
+
+					registeredHandles[(sessionId)] = [activityDate: new Date(), userRemoteAddress: userPreinitializeData.userRemoteAddress, platform: userPreinitializeData.platform]
+
+					// session history start
+					// NJ for now store session history by fingerprint and lets observe how sessions will behave
+					// sessions for now are not connected with fingerprint they would work as they did before
+					def sessionUserEntry = userSessionsCache.get(userPreinitializeData.platform.userIdentifier)
+					if(sessionUserEntry.userRemoteAddress && sessionUserEntry.userRemoteAddress != userPreinitializeData.userRemoteAddress) {
+						if(!sessionUserEntry.log) {
+							sessionUserEntry.log = []
+						}
+						sessionUserEntry.log << "Changed ip from ${sessionUserEntry.userRemoteAddress} to {userPreinitializeData.userRemoteAddress}"
+					}
+					if(!sessionUserEntry.sessionsHistory) {
+						sessionUserEntry.sessionsHistory = []
+					}
+					def foundSession = sessionUserEntry.sessionsHistory.find {it.sessionId == sessionId}
+					if(!foundSession) {
+						// some new session appeared
+						sessionUserEntry.sessionsHistory = [[sessionId: sessionId, date: dateFormat2.format(new Date())]] + sessionUserEntry.sessionsHistory
+					}
+
+					sessionUserEntry.activityDate = new Date()
+					sessionUserEntry.userRemoteAddress = userPreinitializeData.userRemoteAddress
+					sessionUserEntry.platform = userPreinitializeData.platform
+					// session history end
+
 					localLogger "registeredHandles: ${registeredHandles}"
 					def bodyObj = [status: 'success', handle: sessionId]
 					addPageProps(bodyObj)
@@ -1081,58 +1149,6 @@ class Server extends AbstractVerticle {
 				}
 			}
 		})
-	}
-
-	private def performKeyCacheSearch(def message) {
-		def bodyObject
-
-		if(message instanceof JsonObject) {
-			bodyObject = message.mapTo(Map.class)
-		} else {
-			bodyObject = message
-		}
-
-		def searchResults = [:]
-		def filterByType = bodyObject?.searchCriteria?.type
-		def filterByText = bodyObject?.searchCriteria?.text
-		def currentKeyCache = cacheByKeyContainer.asMap()
-
-		if(!filterByText || !currentKeyCache) {
-			return searchResults
-		}
-
-		if(filterByText.startsWith('HZ')) {
-			filterByText = Math.abs((filterByText ?: 'unknown').hashCode()).toString()
-			localLogger "HZ text detected. Translating ..."
-		}
-
-		def filterByParts = filterByText.split(',')
-		currentKeyCache.each { key, value ->
-			if(filterByType) {
-				if(!key.startsWith(filterByType + '_')) {
-					return
-				}
-
-				def foundRes = filterByParts.find { filterByPartsItem ->
-					return key.contains(filterByPartsItem.trim())
-				}
-				if(foundRes) {
-					searchResults[(key)] = value
-				}
-
-			} else {
-				if(key.startsWith('counter_')) {
-					return
-				}
-				def foundRes = filterByParts.find { filterByPartsItem ->
-					return key.contains(filterByPartsItem.trim())
-				}
-				if(foundRes) {
-					searchResults[(key)] = value
-				}
-			}
-		}
-		return searchResults
 	}
 
 	private void pushEventBusMessage(def args = [:]) {

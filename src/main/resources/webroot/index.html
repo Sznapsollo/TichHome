@@ -23,6 +23,8 @@
 	<script type="text/javascript" src="inc/js/libraries/mitt.umd.js"></script>
 	<script type="text/javascript" src="inc/js/libraries/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="inc/js/libraries/lodash.min.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/localsession.min.js" ></script>
+	<script type="text/javascript" src="inc/js/libraries/platform.js" ></script>
 	<script type="text/javascript" src="inc/js/scripts.js" ></script>
 
 	<link rel="stylesheet" href="inc/bootstrap-5.0.0-dist/css/bootstrap.min.css" >
@@ -63,6 +65,9 @@
 								<li>
 									<router-link :to="{ name: 'sensorList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='sensorList'}">{{translate('sensors')}}</router-link>
 								</li>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="#" onclick="activeTichSessions()">Tich sessions</a>
+								<a class="dropdown-item" href="#" onclick="getTichSessionsHistory()">Tich sessions history</a>
 							</ul>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'actions' }">
@@ -108,6 +113,9 @@
 			<span class="alert-text"></span>
 		</div>
 
+		<item-modal></item-modal>
+		<log-details></log-details>
+
 		<div id="confirmModal" class="modal fade" tabindex="-1">
 			<div class="modal-dialog">
 			  <div class="modal-content">
@@ -126,8 +134,23 @@
 			</div>
 		</div>
 
-		<item-modal></item-modal>
-		<log-details></log-details>
+		<div class="modal fade" id="showTextModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <h5 class="modal-title" id="showTextModalTitle">&nbsp;</h5>
+					  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+					  <div class="modal-text" >
+					  </div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-bs-dismiss="modal">{{translate('close')}}</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<div style="text-align: right;color: #999999;font-size: 8px;padding: 5px;">v: {{versionTichHome}}</div>
 		<div style="display: none">{{refresher}}</div>
