@@ -241,7 +241,11 @@ class Server extends AbstractVerticle {
 					case 'setRegularActionData':
 						result.data = setRegularActionData(incomingData)
 						result.message = 'ok'
-						pushEventBusMessage([path: "applicationMessage/", message: [name: (("${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: incomingData?.id]])
+
+						def responseRegularData = [id: incomingData?.id]
+						def responseRegularDataDetails = checkRegularActionData([id: responseRegularData.id])
+
+						pushEventBusMessage([path: "applicationMessage/", message: [name: (("${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: responseRegularDataDetails]])
 						break;
 					case 'setSensorActionData':
 						result.data = setSensorActionData(incomingData)
@@ -340,7 +344,13 @@ class Server extends AbstractVerticle {
 		
 		returnData.returnData = checkDelayData([id: incomingData.outletId])
 		returnData?.notifyIds?.each { notifyIdItem ->
-			pushEventBusMessage([path: "applicationMessage/", message: [name: (("toogle${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyIdItem]])
+			// got to cast BigDeimal to float so JsonObject will accept it
+			def notifyDelayData = [id: notifyIdItem]
+			def notifyDelayDataDetails = HelperService.castDecimalValueToFloat(checkDelayData([id: notifyIdItem]))
+			if(notifyDelayDataDetails) {
+				notifyDelayData.putAll(notifyDelayDataDetails)
+			}
+			pushEventBusMessage([path: "applicationMessage/", message: [name: (("toogle${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyDelayData]])
 		}
 
 		return returnData.returnData

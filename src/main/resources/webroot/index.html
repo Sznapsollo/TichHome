@@ -66,8 +66,8 @@
 									<router-link :to="{ name: 'sensorList'}" class="dropdown-item" v-bind:class="{ active: $route.name=='sensorList'}">{{translate('sensors')}}</router-link>
 								</li>
 								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#" onclick="activeTichSessions()">Tich sessions</a>
-								<a class="dropdown-item" href="#" onclick="getTichSessionsHistory()">Tich sessions history</a>
+								<a class="dropdown-item" onclick="activeTichSessions()">{{translate('sessions')}}</a>
+								<a class="dropdown-item" onclick="getTichSessionsHistory()">{{translate('sessionsHistory')}}</a>
 							</ul>
 						</li>
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'actions' }">

@@ -411,19 +411,43 @@ app.component('switch-item', {
 				checkInterval(timerCountDownDelay, countDownDelay, 1);
 
 				window.mittEmitter.on('checkData', function(data){
-					if(data == 'all' || outletId.value == data) {
-						// console.log('checkData doing it!!')
-						checkData()
+					if(!data) {
+						return
+					}
+					if(itemSubType.value == 'G'){
+						return
+					}
+
+					if(typeof data == 'object' && data.id) {
+						if(data.id == outletId.value) {
+							if(data.time !== undefined && data.delay !== undefined) {
+								setupDelayData(data)
+							} else {
+								checkData()	
+							}
+						}
+					} else if(typeof data == 'string') {
+						if(data == 'all' || outletId.value == data) {
+							// console.log('checkData doing it!!')
+							checkData()
+						}
 					}
 				}); 
 			}
 
 			if(regularActions.value == true) {
 				window.mittEmitter.on('checkRegularData', function(data){
-					if(data == 'all' || outletId.value == data) {
-						// console.log('checkData doing it!!')
-						if(outletId.value == data) {
-							// console.log('checkRegularData doing it!!')
+					if(!data) {
+						return
+					}
+
+					if(typeof data == 'object' && data.name) {
+						if(data.name == outletId.value) {
+							setupRegularSettings(data)
+						}
+					} else if(typeof data == 'string') {
+						if(data == 'all' || outletId.value == data) {
+							// console.log('checkData doing it!!')
 							checkRegularActionData()
 						}
 					}
@@ -444,6 +468,13 @@ app.component('switch-item', {
 			clearTimeout(timerCheckData);
 			clearTimeout(timerCountDownDelay);
 		})
+
+		Vue.watch(
+			() => [props.item],
+			async (newArgs) => {
+				console.log('watch item', props.item.id)
+				init()
+			})
 
 		return {
 			boolValue,

@@ -236,6 +236,24 @@ class HelperService {
 		return ((value ?: '').toString())
 	}
 
+	static Map castDecimalValueToFloat(Map data) {
+        if (!data) {
+            return data
+        }
+
+        data.entrySet().each { entry ->
+            if (entry.value instanceof BigDecimal) {
+                entry.value = entry.value as Float
+            } else if (entry.value instanceof List) {
+                entry.value = castDecimalValueToFloat(entry.value)
+            } else if (entry.value instanceof Map) {
+                entry.value = castDecimalValueToFloat(entry.value)
+            }
+        }
+
+        data
+    }
+
 	void localLogger(def message, def onlyDev = false) {
 		logger.info((((message).toString()) << '\n').toString())
 	}

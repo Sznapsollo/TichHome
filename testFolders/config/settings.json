@@ -242,6 +242,8 @@
 		{"code":"sendOption_3","description":"Mac Address Item"},
 		{"code":"sendOption_4","description":"Shell Item"},
 		{"code":"sendOption_5","description":"Group Item"},
+		{"code":"sessions","description":"Sessions"},
+		{"code":"sessionsHistory","description":"Sessions history"},
 		{"code":"htaccessWarning","description":"If someone except for you would be using web UI of AKHomeAutomation system then security measures should be implemented in Server.isSecured()."}
 	]
 }

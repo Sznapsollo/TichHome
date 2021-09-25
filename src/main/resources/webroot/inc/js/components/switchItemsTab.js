@@ -43,7 +43,7 @@ const SwitchItemsTab = {
 					dataLoading.value = false
 					if(data.message == 'ok') {
 						switchItems.value = data.data.items;
-						// console.log('got data', switchItems.value)
+						// console.log('got tab data', switchItems.value)
 						if(data.data.itemsDictionary) {
 							automation.setItemsDictionary(data.data.itemsDictionary);
 						}
