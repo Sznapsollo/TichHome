@@ -209,8 +209,8 @@ class Server extends AbstractVerticle {
 						result.data = checkLogsFileData(incomingData)
 						result.message = 'ok'
 						break;
-					case 'checkMachineAvailability':
-						result.data = checkMachineAvailability(incomingData)
+					case 'checkItemAvailability':
+						result.data = checkItemAvailability(incomingData)
 						result.message = 'ok'
 						break;
 					case 'checkRegularActionData':
@@ -450,6 +450,7 @@ class Server extends AbstractVerticle {
 						icon: item.getProp('icon'), 
 						image: item.getProp('image'), 
 						delay: defaultDelayValue, 
+						canCheckAvailabitylyIp: item.getProp('checkAvailabilityIp')?.size() > 0,
 						header: item.getProp('header'), 
 						questionOff: item.getProp('questionOff'), 
 						questionOn: item.getProp('questionOn'), 
@@ -475,6 +476,7 @@ class Server extends AbstractVerticle {
 						icon: item.getProp('icon'), 
 						image: item.getProp('image'), 
 						delay: defaultDelayValue, 
+						canCheckAvailabitylyIp: item.getProp('checkAvailabilityIp')?.size() > 0,
 						header: item.getProp('header'), 
 						questionOff: item.getProp('questionOff'), 
 						questionOn: item.getProp('questionOn'), 
@@ -925,7 +927,7 @@ class Server extends AbstractVerticle {
 		return returnData
 	}
 
-	private def checkMachineAvailability(def incomingData) {
+	private def checkItemAvailability(def incomingData) {
 		def returnData = [:]
 		def id = incomingData.id
 		def timeLine = incomingData.timeLine
@@ -939,20 +941,23 @@ class Server extends AbstractVerticle {
 			return returnData
 		}
 
+		if(!(item.getProp('checkAvailabilityIp')?.size() > 0)) {
+			return returnData
+		}
+
 		// tbd later does not seem to work
 		// cat /proc/net/arp | grep c4:e9:84:91:c3:25 | cut -d ' ' -f 1
-		def getIpCommand = ["cat", '/proc/net/arp', '|', 'grep', item.CodeOn().toLowerCase(), '|', 'cut', '-d', "' '", '-f', '1']
-		def ipResult = helperService.runShellCommand(getIpCommand)
-		localLogger "getIpCommand: ${ipResult}"
+		// def getIpCommand = ["cat", '/proc/net/arp', '|', 'grep', item.CodeOn().toLowerCase(), '|', 'cut', '-d', "' '", '-f', '1']
+		// def ipResult = helperService.runShellCommand(getIpCommand)
+		// localLogger "getIpCommand: ${ipResult}"
 
-		if(ipResult) {
-			def ipCommand = "ping ${ipResult} -w 1"
+		// if(ipResult) {
+			// def ipCommand = "ping ${ipResult} -w 1"
+			def ipCommand = "ping -c 1 ${item.getProp('checkAvailabilityIp')}"
 
 			def pingResult = helperService.runShellCommand(ipCommand.split(' '))
-			if(pingResult?.contains('1 received')) {
-				returnData.available = true
-			}
-		}
+			returnData.available = pingResult?.contains('1 received') ? true : false
+		// }
 
 		return returnData
 	}

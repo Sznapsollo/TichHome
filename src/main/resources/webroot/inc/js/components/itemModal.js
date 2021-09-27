@@ -106,6 +106,12 @@ app.component('item-modal', {
 							<small id="itemDelayHelp" class="form-text text-muted">{{translate('itemDelayHelp')}}</small>
 							<p/>
 						</div>
+						<div class="form-group">
+							<label for="itemCheckAvailabityIp">{{translate('itemCheckAvailabity')}}(ip):</label>
+							<input v-on:change="checkChanges()" class="form-control" name="itemCheckAvailabityIp" type="text" v-model="item.checkAvailabilityIp" />
+							<small id="itemCheckAvailabityHelp" class="form-text text-muted">{{translate('itemCheckAvailabityHelp')}}</small>
+							<p/>
+						</div>
 						<div class="form-check">
 							<input v-on:change="checkChanges()" class="form-check-input" name="itemEnableOn" type="checkbox" v-model="item.enableOn" /><label class="form-check-label" for="itemEnableOn">{{translate('itemEnableOn')}}:</label>
 							<small id="itemEnableOnHelp" class="form-text text-muted">{{translate('itemEnableOnHelp')}}</small>

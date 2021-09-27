@@ -211,6 +211,8 @@
 		{"code":"itemRegularActionsHelp","description":"Defines if scheduled actions can be used for this item"},
 		{"code":"itemSendOption","description":"Send Option"},
 		{"code":"itemSendOptionHelp","description":"Defines what type of sending is used for this item"},
+		{"code":"itemCheckAvailabity","description":"Check availability"},
+		{"code":"itemCheckAvailabityHelp","description":"Ip by wchich 'Check availability' option will be displayed allowing to check if ip is reachable"},
 		{"code":"itemCodeOn","description":"Code On"},
 		{"code":"itemCodeOnHelp","description":"Enabling queries for this item"},
 		{"code":"itemCodeOff","description":"Code Off"},

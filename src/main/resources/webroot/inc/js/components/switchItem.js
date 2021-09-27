@@ -13,10 +13,10 @@ app.component('switch-item', {
 			<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 				<i class="fa fa-close"></i>
 			</button>
-			<span class="machineAvailability" v-if="itemSubType == 'M'" v-on:click="checkAvailability()">
-				<span v-if="machineAvailability == null">{{translate('availability_not_checked')}}</span>
-				<span v-if="machineAvailability" style="color:green">{{translate('availability_available')}}</span>
-				<span v-if="machineAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
+			<span class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
+				<span v-if="itemAvailability == null">{{translate('availability_not_checked')}}</span>
+				<span v-if="itemAvailability" style="color:green">{{translate('availability_available')}}</span>
+				<span v-if="itemAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
 			</span>
 			<div class="numberPicker" v-if="delay">
 				<input v-if="showTimer" type="number" v-model="delayValue" v-on:change="changeTimer(delayValue)" min="{{minSliderValue}}" max="{{maxSliderValue}}"  class="form-control" data-min="0" />
@@ -83,6 +83,7 @@ app.component('switch-item', {
 		const questionOff = Vue.ref(item.questionOff);
 		const regularActions = Vue.ref(item.regularActions);
 		const relatedItems = Vue.ref(item.relatedItems);
+		const canCheckAvailabitylyIp = Vue.ref(item.canCheckAvailabitylyIp)
 		
 		const disableDate = Vue.ref(null);
 		const calendarIconName = Vue.ref(automation.getIcon('calendar',''))
@@ -95,7 +96,7 @@ app.component('switch-item', {
 		const delayValue = Vue.ref(null);
 		const initialDelayValue = Vue.ref(null);
 		const data = Vue.ref({});
-		const machineAvailability = Vue.ref(null);
+		const itemAvailability = Vue.ref(null);
 		const timeEnd = Vue.ref("");
 		const regularActionData = Vue.ref({});
 		const refresher = Vue.ref(true)
@@ -104,13 +105,13 @@ app.component('switch-item', {
 		var timerCheckData;
 		var timerCountDownDelay;
 
-		const checkAvailability = function() {
+		const checkItemAvailability = function() {
 			busy.value = true;
-			machineAvailabilityService.checkMachineAvailability(outletId.value, 
+			itemAvailabilityService.checkItemAvailability(outletId.value, 
 				function(data) {
 					busy.value = false;
 					if(data.message == 'ok') {
-						machineAvailability.value = data.data.available;
+						itemAvailability.value = data.data.available;
 					} else {
 						showErrorMessage(data)	
 					}
@@ -481,9 +482,10 @@ app.component('switch-item', {
 			busy,
 			calculatedTime,
 			calendarIconName,
+			canCheckAvailabitylyIp,
 			changeTimer,
 			changeValue,
-			checkAvailability,
+			checkItemAvailability,
 			checkRegularActionData,
 			clickButton,
 			data,
@@ -501,7 +503,7 @@ app.component('switch-item', {
 			isEnabled,
 			itemType,
 			itemSubType,
-			machineAvailability,
+			itemAvailability,
 			maxSliderValue,
 			minSliderValue,
 			outletId,

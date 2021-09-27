@@ -10,9 +10,9 @@ var itemsDataService = {
 	}
 }
 
-var machineAvailabilityService = {
-	checkMachineAvailability: function(id, callback, failCallback) {
-		sendActionsData({type: 'checkMachineAvailability', id: id}, callback, failCallback)
+var itemAvailabilityService = {
+	checkItemAvailability: function(id, callback, failCallback) {
+		sendActionsData({type: 'checkItemAvailability', id: id}, callback, failCallback)
 	}
 }
 
