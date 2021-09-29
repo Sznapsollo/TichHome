@@ -23,6 +23,9 @@ app.component('switch-item', {
 				<hours-and-minutes v-on:click="toggleSliderOptions()" class="timerNormal" v-if="!showTimer" v-bind:delayValue="delayValue"></hours-and-minutes>
 			</div>
 		</div>
+		<div class="itemRegularActionsRandomData" v-if="regularActionRandomStart != null && regularActionRandomEnd != null && regularActionRandomStart.length && regularActionRandomEnd.length">
+			{{translate('itemRandom')}}: {{regularActionRandomStart}} - {{regularActionRandomEnd}}
+		</div>
 		<div v-if="relatedItems && relatedItems.length" class="relatedItems">
 			{{relatedItems ? relatedItems.join(', ') : ''}}
 		</div>
@@ -84,6 +87,8 @@ app.component('switch-item', {
 		const regularActions = Vue.ref(item.regularActions);
 		const relatedItems = Vue.ref(item.relatedItems);
 		const canCheckAvailabitylyIp = Vue.ref(item.canCheckAvailabitylyIp)
+		const regularActionRandomStart = Vue.ref(item.regularActionRandomStart)
+		const regularActionRandomEnd = Vue.ref(item.regularActionRandomEnd)
 		
 		const disableDate = Vue.ref(null);
 		const calendarIconName = Vue.ref(automation.getIcon('calendar',''))
@@ -453,6 +458,18 @@ app.component('switch-item', {
 						}
 					}
 				});
+				window.mittEmitter.on('updateRegularActionDataRandoms', function(data){
+					if(!data) {
+						return
+					}
+
+					if(typeof data == 'object' && data.name) {
+						if(data.name == outletId.value) {
+							regularActionRandomStart.value = data.regularActionRandomStart,
+							regularActionRandomEnd.value = data.regularActionRandomEnd
+						}
+					}
+				});
 			}
 		};
 
@@ -513,6 +530,8 @@ app.component('switch-item', {
 			refresher,
 			regularActions,
 			regularActionData,
+			regularActionRandomStart,
+			regularActionRandomEnd,
 			relatedItems,
 			saveRegularSettings,
 			showRegular,

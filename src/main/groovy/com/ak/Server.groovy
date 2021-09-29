@@ -90,7 +90,7 @@ class Server extends AbstractVerticle {
 		itemCheckerService = new ItemCheckerService(settingsService)
 		sensorCheckerService = new SensorCheckerService(settingsService)
 		signalSenderService = new SignalSenderService(vertx, settingsService, itemCheckerService, [stopRegularActionsService: this.&stopRegularActionsService, startRegularActionsService: this.&startRegularActionsService])
-		regularActionsService = new RegularActionsService(vertx, settingsService, itemCheckerService, [toggleAction: this.&toggleAction])
+		regularActionsService = new RegularActionsService(vertx, settingsService, itemCheckerService, [toggleAction: this.&toggleAction, pushEventBusMessage: this.&pushEventBusMessage])
 
 		router = Router.router(vertx)
 		
@@ -245,7 +245,7 @@ class Server extends AbstractVerticle {
 						def responseRegularData = [id: incomingData?.id]
 						def responseRegularDataDetails = checkRegularActionData([id: responseRegularData.id])
 
-						pushEventBusMessage([path: "applicationMessage/", message: [name: (("${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: responseRegularDataDetails]])
+						pushEventBusMessage([path: "applicationMessage/", message: [name: (("setRegularActionData-${incomingData?.id}").toString()), type: 'callbackCenter', centerName: 'checkRegularData', status: 'OK', data: responseRegularDataDetails]])
 						break;
 					case 'setSensorActionData':
 						result.data = setSensorActionData(incomingData)
@@ -350,7 +350,7 @@ class Server extends AbstractVerticle {
 			if(notifyDelayDataDetails) {
 				notifyDelayData.putAll(notifyDelayDataDetails)
 			}
-			pushEventBusMessage([path: "applicationMessage/", message: [name: (("toogle${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyDelayData]])
+			pushEventBusMessage([path: "applicationMessage/", message: [name: (("toggleAction-${notifyIdItem}").toString()), type: 'callbackCenter', centerName: 'checkData', status: 'OK', data: notifyDelayData]])
 		}
 
 		return returnData.returnData
@@ -461,7 +461,9 @@ class Server extends AbstractVerticle {
 						itemSubType: "I", 
 						enabled: item.getProp('enabled'),
 						delayData: checkDelayData([id: item.getProp('name')]),
-						regularActionData: checkRegularActionData([id: item.getProp('name')])
+						regularActionData: checkRegularActionData([id: item.getProp('name')]),
+						regularActionRandomStart: item.regularActionRandomStart,
+						regularActionRandomEnd: item.regularActionRandomEnd
 					]
 				}
 				else if(item instanceof ItemCheckerService.GroupItem || item instanceof ItemCheckerService.MacItem)
@@ -486,7 +488,9 @@ class Server extends AbstractVerticle {
 						itemSubType: ((item instanceof ItemCheckerService.MacItem) ? "M" : "G"), 
 						enabled: item.getProp('enabled'),
 						relatedItems: relatedItems,
-						regularActionData: checkRegularActionData([id: item.getProp('name')])
+						regularActionData: checkRegularActionData([id: item.getProp('name')]),
+						regularActionRandomStart: item.regularActionRandomStart,
+						regularActionRandomEnd: item.regularActionRandomEnd
 					]
 				}
 			}
@@ -1008,8 +1012,9 @@ class Server extends AbstractVerticle {
 			def timeLineJson = jsonObj.toString()
 			helperService.writeFile(settingsService.regularactionFilesPath, fileName, timeLineJson)
 			item.regularActionsData = jsonObj
+			// nulling just one so regularActionService will regenerate
 			item.regularActionRandomStart = null
-			item.regularActionRandomEnd = null
+			// item.regularActionRandomEnd = null
 		} else {
 			def filePath = (("${settingsService.regularactionFilesPath}${fileName}").toString())
 			def dh = new File(filePath)

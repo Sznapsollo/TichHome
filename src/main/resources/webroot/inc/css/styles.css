@@ -137,6 +137,12 @@
 	font-size: 8pt;
 }
 
+.itemRegularActionsRandomData {
+	font-size: 8pt;
+    margin-top: -15px;
+    text-align: right;
+}
+
 .sensorswitch,
 .powerswitch {
 	margin: 15px 0 8px 0;

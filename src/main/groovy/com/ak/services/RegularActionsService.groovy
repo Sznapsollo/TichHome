@@ -44,8 +44,10 @@ class RegularActionsService {
 		def dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 		def dayOfWeek = translateDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))
 
+		def performUpdateOnItems = [:]
 		def items = itemCheckerService.getItems(null);
 		items?.each { item ->
+			def randomActiveToday = false
 			if(!item.regularActionsData) {
 				return
 			}
@@ -75,57 +77,62 @@ class RegularActionsService {
 				adjustTimeData()
 
 				def days = timeUnit['daysOfWeek'].split(',').findAll{it != ''}.collect {it.toInteger()}
-
 				if(timeUnit.random) {
-					if(!item.regularActionRandomStart || !item.regularActionRandomEnd) {
+					if(days.contains(dayOfWeek) && item.regularActionDayOffPerformed != dayOfWeek) {
+						if(!item.regularActionRandomStart || !item.regularActionRandomEnd) {
 
-						def number1 = getRandomNumberInRange(hourStart.toInteger(), hourEnd.toInteger())
-						def number2 = getRandomNumberInRange(hourStart.toInteger(), hourEnd.toInteger())
+							def number1 = getRandomNumberInRange(hourStart.toInteger(), hourEnd.toInteger())
+							def number2 = getRandomNumberInRange(hourStart.toInteger(), hourEnd.toInteger())
 
-						def randHourStart = number1 >= number2 ? number2 : number1
-						def randHourEnd = number1 >= number2 ? number1 : number2
+							def randHourStart = number1 >= number2 ? number2 : number1
+							def randHourEnd = number1 >= number2 ? number1 : number2
 
-						def startMinMinuteForRand = randHourStart == hourStart.toInteger() ? minuteStart.toInteger() : 0
-						def startMaxMinuteForRand = randHourStart == hourEnd.toInteger() ? minuteEnd.toInteger() : 59
+							def startMinMinuteForRand = randHourStart == hourStart.toInteger() ? minuteStart.toInteger() : 0
+							def startMaxMinuteForRand = randHourStart == hourEnd.toInteger() ? minuteEnd.toInteger() : 59
 
-						def endMinMinuteForRand = hourStart.toInteger() == randHourEnd ? minuteStart.toInteger() : 0
-						def endMaxMinuteForRand = randHourEnd == hourEnd.toInteger() ? minuteEnd.toInteger() : 59
+							def endMinMinuteForRand = hourStart.toInteger() == randHourEnd ? minuteStart.toInteger() : 0
+							def endMaxMinuteForRand = randHourEnd == hourEnd.toInteger() ? minuteEnd.toInteger() : 59
 
-						def randMinuteStart = getRandomNumberInRange(startMinMinuteForRand, startMaxMinuteForRand)
-						def randMinuteEnd = getRandomNumberInRange(endMinMinuteForRand, endMaxMinuteForRand)
+							def randMinuteStart = getRandomNumberInRange(startMinMinuteForRand, startMaxMinuteForRand)
+							def randMinuteEnd = getRandomNumberInRange(endMinMinuteForRand, endMaxMinuteForRand)
 
-						if(randHourStart == randHourEnd) {
-							while(randMinuteEnd <= randMinuteStart) {
-								if(randMinuteStart == 0) {
-									if (randMinuteEnd == 0) {
-										randMinuteEnd += 5
+							if(randHourStart == randHourEnd) {
+								while(randMinuteEnd <= randMinuteStart) {
+									if(randMinuteStart == 0) {
+										if (randMinuteEnd == 0) {
+											randMinuteEnd += 5
+										}
+										break
 									}
-									break
+									randMinuteStart -= 1
 								}
-								randMinuteStart -= 1
 							}
+
+							def padNumber = {testNumber ->
+								return (testNumber < 10 ? "0" : "") + testNumber;
+							}
+
+							timeStart = toString("${padNumber(randHourStart)}:${padNumber(randMinuteStart)}")
+							timeEnd = toString("${padNumber(randHourEnd)}:${padNumber(randMinuteEnd)}")
+							
+							item.regularActionRandomStart = timeStart
+							item.regularActionRandomEnd = timeEnd
+							
+							// was setup so requires update
+							performUpdateOnItems[(item.getProp('name'))] = item
+
+							localLogger "------ obtained random start: ${timeStart} end: ${timeEnd} for ${item.getProp('name')}"
+						} else {
+							timeStart = item.regularActionRandomStart
+							timeEnd = item.regularActionRandomEnd
+							
+							// localLogger "------ obtained random start: ${timeStart} end: ${timeEnd} for ${item.getProp('name')}"
 						}
+						randomActiveToday = true
 
-						timeStart = toString("${randHourStart}:${randMinuteStart}")
-						timeEnd = toString("${randHourEnd}:${randMinuteEnd}")
-						
-						item.regularActionRandomStart = timeStart
-						item.regularActionRandomEnd = timeEnd
-						
-						localLogger "------ obtained random start: ${timeStart} end: ${timeEnd} for ${item.getProp('name')}"
-					} else {
-						timeStart = item.regularActionRandomStart
-						timeEnd = item.regularActionRandomEnd
-						
-						// localLogger "------ obtained random start: ${timeStart} end: ${timeEnd} for ${item.getProp('name')}"
+						adjustTimeData()
 					}
-
-					adjustTimeData()
-				} 
-				// else {
-				// 	item.regularActionRandomStart = null
-				// 	item.regularActionRandomEnd = null
-				// }
+				}
 
 				def todayDateTimeStart = new Date().copyWith(
 					year: year, 
@@ -176,6 +183,25 @@ class RegularActionsService {
 				disable(item)
 				item.regularActionDayOffPerformed = dayOfWeek
 			}
+
+			if(!randomActiveToday) {
+				if(item.regularActionRandomStart || item.regularActionRandomEnd) {
+					// has some got to null it
+					item.regularActionRandomStart = null
+					item.regularActionRandomEnd = null
+					performUpdateOnItems[(item.getProp('name'))] = item
+				}	
+			}
+		}
+
+		performUpdateOnItems?.each { itemKey, itemValue ->
+			// should push to inform
+			actions.pushEventBusMessage([path: "applicationMessage/", message: [name: (("updateRegularActionDataRandoms-${itemKey}").toString()), type: 'callbackCenter', centerName: 'updateRegularActionDataRandoms', status: 'OK', data: 
+			[
+				name: itemKey,
+				regularActionRandomStart: itemValue.regularActionRandomStart,
+				regularActionRandomEnd: itemValue.regularActionRandomEnd
+			]]])
 		}
 	}
 
