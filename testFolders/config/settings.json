@@ -190,6 +190,10 @@
 			"code":"no_delay",
 			"description":"No delay"
 		},
+		{  
+			"code":"no_value",
+			"description":"No value"
+		},
 		{"code":"itemAddNewItem","description":"Add new item"},
 		{"code":"itemAddNew","description":"Add new"},
 		{"code":"itemName","description":"Name"},

@@ -14,7 +14,7 @@ app.component('regular-settings', {
 				<button type="button" class="btn btn-default" style="margin-right: 10px; color: red;" aria-label="Left Align" v-on:click="removeUnit(timeUnit)" v-if="timeUnits.length > 1">
 					<i class="fa fa-times"></i>
 				</button>
-				<input type="time" v-model="timeUnit.timeStart" name="time_start" class="timeInputField">&nbsp-&nbsp<input type="time" v-model="timeUnit.timeEnd" name="time_end" class="timeInputField">
+				<span v-if="!timeUnit.timeStart || !timeUnit.timeStart.length" v-on:click="timeUnit.timeStart='12:00'">{{translate('no_value')}}</span><input type="time" v-if="timeUnit.timeStart && timeUnit.timeStart.length" v-model="timeUnit.timeStart" name="time_start" class="timeInputField">&nbsp-&nbsp<span v-if="!timeUnit.timeEnd || !timeUnit.timeEnd.length" v-on:click="timeUnit.timeEnd='12:00'">{{translate('no_value')}}</span><input v-if="timeUnit.timeEnd && timeUnit.timeEnd.length" type="time" v-model="timeUnit.timeEnd" name="time_end" class="timeInputField">
 			</div>
 			<div v-if="randomEnabled" class="checkbox" style="margin: 10px auto 10px auto; text-align: center; margin-top: 10px;">
 				<label class="checkbox-inline"><input type="checkbox" v-model="timeUnit.random" style="margin-right: 10px">{{translate('itemRandom')}}</label>
@@ -166,17 +166,25 @@ app.component('regular-settings', {
 					var startHour = getTimeNumber(element.timeStart, 'hour')
 					var startMinute = getTimeNumber(element.timeStart, 'minute')
 
-					startHour = startHour ? startHour : 0
-					startMinute = startMinute ? startMinute : 0
-					var timeStart = (startHour).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + ':' + (startMinute).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+					startHour = startHour
+					startMinute = startMinute
+					var timeStart
+
+					if(startHour != null && startMinute != null) {
+						timeStart = (startHour).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + ':' + (startMinute).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})	
+					}
 
 					var endHour = getTimeNumber(element.timeEnd, 'hour')
 					var endMinute = getTimeNumber(element.timeEnd, 'minute')
 
-					endHour = endHour ? endHour : 0
-					endMinute = endMinute ? endMinute : 0
-					var timeEnd = (endHour).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + ':' + (endMinute).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+					endHour = endHour
+					endMinute = endMinute
+					var timeEnd
 					
+					if(endHour != null && endMinute != null) {
+						timeEnd = (endHour).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + ':' + (endMinute).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+					}
+
 					timeUnits.value.push({timeStart:timeStart,timeEnd:timeEnd,daysOfWeek:element.daysOfWeek,random:element.random});
 				});
 			}
