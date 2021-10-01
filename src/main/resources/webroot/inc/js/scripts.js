@@ -248,31 +248,55 @@ function directMessageToProperAlert(responseData) {
 
 var successAlertHandle
 function showSuccessMessage(message, delay) {
-    if(!delay) { delay = 3000 }
-    $("#success-alert .alert-text").html(message);
+    if(!delay) { delay = 5000 }
+    var alertVisible = $("#success-alert").is(":visible")
+
+    var currText = $("#success-alert .alert-text").html();
+    if(!alertVisible || !currText || !currText.length) {
+        $("#success-alert .alert-text").html(message);
+    } else {
+        $("#success-alert .alert-text").html([currText, message].join('<br><br>'));
+    }
     if(successAlertHandle) {
         clearTimeout(successAlertHandle)
         successAlertHandle = null
     }
-    $("#success-alert").show("slow")
+    if(alertVisible) {
+        $("#success-alert").show()
+    } else {
+        $("#success-alert").slideDown()
+    }
     successAlertHandle = setTimeout(function() {
-        $("#success-alert").hide('slow')
+        $("#success-alert").slideUp('slow')
     }, delay)
 }
 
 var dangerAlertHandle
 function showDangerMessage(message, delay) {
-    if(!delay) { delay = 10000 }
-    $("#danger-alert .alert-text").html(message);
+    if(!delay) { delay = 20000 }
+    var alertVisible = $("#danger-alert").is(":visible")
+
+    var currText = $("#danger-alert .alert-text").html();
+    if(!alertVisible || !currText || !currText.length) {
+        $("#danger-alert .alert-text").html(message);
+    } else {
+        $("#danger-alert .alert-text").html([currText, message].join('<br><br>'));
+    }
     if(dangerAlertHandle) {
         clearTimeout(dangerAlertHandle)
         dangerAlertHandle = null
     }
-    $("#danger-alert").show("slow")
+    if(alertVisible) {
+        $("#danger-alert").show()
+    } else {
+        $("#danger-alert").slideDown()
+    }
+
     dangerAlertHandle = setTimeout(function() {
-        $("#danger-alert").hide('slow')
+        $("#danger-alert").slideUp()
     }, delay)
 }
+
 
 /*
     0: production

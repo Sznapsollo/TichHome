@@ -30,7 +30,7 @@ app.component('log-details', {
 							</div>
 							<div>
 								<div class="logRow" v-for="logItem in logDetailsFilteredLines" >
-									<div style="word-wrap: break-word;">{{logItem}}</div>	
+									<div style="word-wrap: break-word;" v-html="decorateRow(logItem)"></div>	
 								</div>
 							</div>
 						</div>
@@ -57,6 +57,17 @@ app.component('log-details', {
 		let logContentLines = []
 		let logType = null
 		let fileName = null
+
+		const decorateRow = function(text) {
+			if(!text) {
+				return text
+			}
+			return text.replaceAll('status=on','status=<span class="logEnabledStatus">on</span>')
+			.replaceAll('status=off','status=<span class="logDisabledStatus">off</span>')
+			.replaceAll('status=','<span class="logLowDetail">status=</span>')
+			.replaceAll('source=','<span class="logLowDetail">source=</span>')
+			.replaceAll('delay=','<span class="logLowDetail">delay=</span>')
+		}
 
 		const performFilter = function() {
 			
@@ -161,6 +172,7 @@ app.component('log-details', {
 		return {
 			checkLogDetails,
 			dataLoading,
+			decorateRow,
 			dropdownItemsData,
 			dropdownItemsSelected,
 			header,
