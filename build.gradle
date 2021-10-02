@@ -29,7 +29,7 @@ sourceCompatibility = '1.8'
 mainClassName = 'io.vertx.core.Launcher'
 
 def mainVerticleName = 'com.ak.Server' //'io.vertx.starter.MainVerticle'
-def watchForChange = 'src/**/*'
+def watchForChange = 'src/**/*.groovy'
 def doOnChange = './gradlew classes'
 def configFileName = 'testFolders/config/settings.json'
 

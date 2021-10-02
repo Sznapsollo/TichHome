@@ -129,10 +129,41 @@ class Server extends AbstractVerticle {
 		staticPageHandler.setCachingEnabled(false)
 		// staticPageHandler.setDirectoryListing(true)
 		if(settingsService.wwwPath) {
+			createVarsJsFile()
 			staticPageHandler.setAllowRootFileSystemAccess(true)
 			staticPageHandler.setWebRoot(settingsService.wwwPath)
 		}
 		router.route("/${settingsService.serverRootPath}/*").handler(staticPageHandler)
+	}
+
+	def createVarsJsFile() {
+		try{
+            // Create new file
+			def appName = settingsService.serverRootPath
+			def fileContent = "var appName=\"${appName}\""
+            
+            String path="${settingsService.wwwPath}/inc/js/scriptsVars.js";
+            File file = new File(path);
+
+            // If file doesn't exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            // Write in file
+            bw.write(fileContent);
+
+            // Close connection
+            bw.close();
+        }
+        catch(Exception e){
+            localLogger '!!! createVarsJsFile inner exception'
+			localLogger e
+			throw e
+        }
 	}
 
 	private void stopRegularActionsService() {

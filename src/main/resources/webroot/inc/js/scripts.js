@@ -129,7 +129,6 @@ function getTichSessionsHistory() {
 	);
 }
 
-var appName = 'tichhome'
 var defaultSystemErrorMessage = "--- ERROR ---"
 var globalEventBus
 var globalPingTimer
