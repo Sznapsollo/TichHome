@@ -1,0 +1,71 @@
+Here are some commands that you might find in handly when setting up TichHome. Please see pdf with detailed description of what to do which should be somewhere around probably in same folder. Enjoy. 
+
+// always keep your Raspberry env up to date
+sudo apt-get update
+
+// compile solution
+./gradlew shadowJar
+
+// to install Java 8
+sudo apt install openjdk-8-jdk
+sudo update-alternatives --config java (choose java8)
+
+// or if you have some Java folders and can make symlink to proper one
+sudo rm -f /home/pi/Development/java/current-java
+sudo ln -s /home/pi/Development/java/jdk1.7.0_80 /home/pi/Development/java/current-java
+sudo ln -s /home/pi/Development/java/jdk1.8.0_191 /home/pi/Development/java/current-java
+
+// copy jar to raspberry
+scp build/libs/tichhome-1.0-SNAPSHOT-fat.jar pi@192.168.0.10:/home/pi/tichhome
+
+// copy webroot files to raspberry
+scp -r ~/Ebi24/CodeBase/tichhome/src/main/resources/webroot/* pi@192.168.0.10:/home/pi/tichhome/webroot
+
+// manually test run TichHome on Raspberry
+java -jar /home/pi/tichhome/tichhome-1.0-SNAPSHOT-fat.jar --conf /home/pi/tichhome/config/settings.json
+
+// test python scripts on Raspberry
+python scripts work: python /home/pi/tichhome/processes/./run_radio_switch.py /home/pi/tichhome/RadioDevices/codesend 1070164
+
+// test RCSwitch scripts on raspberry
+./codesend 1070161
+
+// if you want to use sensors run sensors python scripts from rc.local
+sudo nano /etc/rc.local
+python /home/pi/tichhome/processes/check_sensors.py
+
+// TichHome as service
+sudo cp /home/pi/tichhome/tichhome.service /etc/systemd/system/tichhome.service
+sudo systemctl enable tichhome.service
+sudo systemctl start tichhome.service
+sudo systemctl stop tichhome.service
+sudo systemctl status tichhome.service
+
+// All installation steps super brief
+- Install Raspbian
+- setup hosts, hostname, enable vnc, ssh
+- Initial run and setup wifi and static IP (from this point you are headless)
+- sudo apt-get update
+- sudo apt-get upgrade
+- install ftp: sudo apt-get install proftpd 
+- install java: sudo apt install openjdk-8-jdk
+- sudo update-alternatives --config java (choose java8)
+- create tichhome folder
+- copy webroot
+- copy jar
+- copy testfolders to main folder
+- change settings file
+- compile RadioDevices: sudo make, if it does not compile and RCSwitch.o changed its size from 12.6 to 12.1 copy RCSwitch.o again and retry compile
+- test if scripts work: ./codesend 1070161, ./codesend 1070164
+- test if python scripts work: python /home/pi/tichhome/processes/./run_radio_switch.py /home/pi/tichhome/RadioDevices/codesend 1070164
+- test run: java -jar /home/pi/tichhome/tichhome-1.0-SNAPSHOT-fat.jar --conf /home/pi/tichhome/config/settings.json
+- should be running http://192.168.0.44:8081/tichhome/#/
+- create service: sudo cp /home/pi/tichhome/tichhome.service /etc/systemd/system/tichhome.service (add to solution)
+- sudo systemctl enable tichhome.service
+- sudo systemctl start tichhome.service
+- [optional] sudo systemctl stop tichhome.service
+- [optional] sudo systemctl status tichhome.service
+- add items
+- enjoy!
+
+

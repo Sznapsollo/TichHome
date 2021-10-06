@@ -1,0 +1,11 @@
+[Unit]
+Description=Java Service
+After=network.target
+ 
+[Service]
+ExecStart=java -jar /home/pi/tichhome/tichhome-1.0-SNAPSHOT-fat.jar --conf /home/pi/tichhome/config/settings.json
+Restart=always
+User=pi
+ 
+[Install]
+WantedBy=multi-user.target
