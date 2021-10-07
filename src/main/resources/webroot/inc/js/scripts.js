@@ -6,6 +6,16 @@ $(document).ready(function()
 		toggleOutlet($(this));
 	});
 
+	$("#danger-alert").on("click", ".btn-close", function(event)
+	{
+		$("#danger-alert").hide()
+	});
+
+	$("#success-alert").on("click", ".btn-close", function(event)
+	{
+		$("#danger-alert").hide()
+	});
+
 	$('.navbar-collapse a').click(function(){
 		let currEl = $(this)
 		if(currEl && currEl.length && currEl[0].classList && currEl[0].classList.contains('dropdown-toggle')) {
