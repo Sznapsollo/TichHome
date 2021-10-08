@@ -123,7 +123,7 @@ function getTichSessionsHistory() {
 			if(dataResponse && dataResponse.data && dataResponse.data.message == 'ok') {
 				var amount = dataResponse.data.data ? dataResponse.data.data.length : 0
 				$("#showTextModal").modal('show');
-				$("#showTextModalTitle").html("sesje HM - historia " + "(" + amount + ")");
+				$("#showTextModalTitle").html(automation.translate('sessionsHistory') + "(" + amount + ")");
 				$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>');
 			} else {
 				var errMsgParts = ['getTichSessionsHistory ']

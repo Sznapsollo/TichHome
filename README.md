@@ -41,17 +41,6 @@ TichHome is Raspberry Pi based home automation / smart home / smart house soluti
 Take care!
 Wanna touch base? office@webproject.waw.pl
 
-## Example Screens
-
-##### Set timeout disable when enabling device (optional)
-![Image of AKHomeAutomation #1](http://cultrides.com/test/Github/AKHomeAutomation/screen2.JPG?)
-
-##### Set scheduled regular actions defining when device should be ON and when OFF (optional)
-![Image of AKHomeAutomation #2](http://cultrides.com/test/Github/AKHomeAutomation/screen1.JPG?)
-
-##### Example homepage with some configured devices
-![Image of AKHomeAutomation #3](http://cultrides.com/test/Github/AKHomeAutomation/screen3.JPG?)
-
 ## In Big short how to deploye on fresh raspberry
 
 It really takes few minues once you get the hang of it
@@ -81,3 +70,20 @@ It really takes few minues once you get the hang of it
 - [optional] sudo systemctl status tichhome.service
 - add items
 - enjoy!
+
+## Example Screens
+For more screens please see **<a href="https://github.com/Sznapsollo/TichHome/blob/master/Readme_TichHome_instructions.pdf" target="_blank">Readme_TichHome_instructions.pdf</a>** and also checkout **<a href="http://cultrides.com/test/Github/TichHome" target="_blank">UI Demo address</a>**
+##### Set timeout disable when enabling device (optional)
+![Image of TichHome #1](http://cultrides.com/test/Github/TichHome/TichHome_screens/delayed.png?)
+
+##### Set scheduled regular actions defining when device should be ON and when OFF (optional)
+![Image of TichHome #2](http://cultrides.com/test/Github/TichHome/TichHome_screens/regularactions.png?)
+
+##### Example homepage with some configured devices
+![Image of TichHome #3](http://cultrides.com/test/Github/TichHome/TichHome_screens/homepage.png?)
+
+##### Example items administration screen
+![Image of TichHome #4](http://cultrides.com/test/Github/TichHome/TichHome_screens/itemsadministration.png?)
+
+##### Example item administration form
+![Image of TichHome #4](http://cultrides.com/test/Github/TichHome/TichHome_screens/itemform.png?)
