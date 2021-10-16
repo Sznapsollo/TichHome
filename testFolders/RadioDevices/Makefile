@@ -1,6 +1,9 @@
-all: send codesend codesendConrad paringConrad receive RFSniffer
+all: send codesend codesendConrad paringConrad receive RFSniffer RFSniffer10s
 
 RFSniffer : RCSwitch.o RFSniffer.o
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi
+
+RFSniffer10s : RCSwitch.o RFSniffer10s.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $+ -o $@ -lwiringPi
 
 receive : RCSwitch.o receive.o

@@ -28,6 +28,7 @@ class SettingsService {
 	public def processesFilesPath
 	public def codeSendPath
 	public def conradCodeSendPath
+	public def rfSnifferPath
 	public def saveDailyLogsToFile
 	public def saveDailySensorLogsToFile
 	public def webServerAddress
@@ -100,6 +101,9 @@ class SettingsService {
 
 		conradCodeSendPath = config.getString("conrad.code.send.path", '')
 		localLogger "conrad.code.send.path: ${conradCodeSendPath}"
+
+		rfSnifferPath = config.getString("rf.sniffer.path", '')
+		localLogger "code.send.path: ${rfSnifferPath}"
 
 		saveDailyLogsToFile = config.getBoolean("save.daily.logs.to.file", true)
 		localLogger "save.daily.logs.to.file: ${saveDailyLogsToFile}"

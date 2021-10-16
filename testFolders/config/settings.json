@@ -20,6 +20,7 @@
 	"sensor.settings.files.path":"/home/pi/tichhome/sensorsettingsfiles/",
 	"code.send.path":"/home/pi/tichhome/RadioDevices/codesend",
 	"conrad.code.send.path":"/home/pi/tichhome/RadioDevices/codesendConrad",
+	"rf.sniffer.path": "/home/pi/tichhome/RadioDevices/./RFSniffer10s",
 	"sensorAlarmMail":{  
 		"enableMailingOnAlarm":false,
 		"fromaddr":"------@gmail.com",
@@ -250,6 +251,7 @@
 		{"code":"sendOption_5","description":"Group Item"},
 		{"code":"sessions","description":"Sessions"},
 		{"code":"sessionsHistory","description":"Sessions history"},
-		{"code":"htaccessWarning","description":"If someone except for you would be using web UI of AKHomeAutomation system then security measures should be implemented in Server.isSecured()."}
+		{"code":"htaccessWarning","description":"If someone except for you would be using web UI of AKHomeAutomation system then security measures should be implemented in Server.isSecured()."},
+		{"code":"checkRFSniffer","description":"Sniff RF"}
 	]
 }

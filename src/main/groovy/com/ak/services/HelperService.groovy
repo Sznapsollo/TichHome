@@ -138,7 +138,7 @@ class HelperService {
         
         Process process = pb.start()
 	}
-	def runShellCommand(def command) {
+	def runShellCommand(def command, def mustSucceed = true) {
 		try {
 			def pb = new ProcessBuilder(command)
 			localLogger "runShellCommand - executing: ${command.join(' ')}"
@@ -158,12 +158,13 @@ class HelperService {
 			}
 			String result = builder.toString();
 
-			// localLogger result
-
 			process.waitFor()
+			// localLogger "${command} result: ${result}"
 			// process.waitFor(10, TimeUnit.SECONDS)
 
 			if(process.exitValue() == 0 && result) {
+				return result
+			} else if(mustSucceed == false && result) {
 				return result
 			} else {
 				return ''

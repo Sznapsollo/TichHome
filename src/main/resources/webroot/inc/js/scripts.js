@@ -91,6 +91,27 @@ function produceUserIdentifier() {
     });
 }
 
+function checkRFSniffer() {
+    var data = {type: 'checkRFSniffer'}
+    data = JSON.stringify(data)
+	axios.post(('/' + appName + '/actions'), data)
+		.then(function (dataResponse) {
+			if(dataResponse && dataResponse.data && dataResponse.data.message == 'ok') {
+				directMessageToProperAlert({status: 'OK', message: dataResponse.data.data || '--- checkRFSniffer ---'})
+			} else {
+				var errMsgParts = ['Rniff RF ']
+				if(dataResponse && dataResponse.data) {
+					errMsgParts.push(dataResponse.data.message ? dataResponse.data.message : dataResponse.data.data)
+				}
+				showErrorMessage(errMsgParts.join(' '));
+			}
+		})
+		.catch(function (error) {
+			showErrorMessage(error)
+		}
+	);
+}
+
 function activeTichSessions() {
     var data = {type: 'checkTichSessions'}
     data = JSON.stringify(data)
@@ -201,6 +222,8 @@ function registerAKHomeAutomationOnEventBus(initializeKey) {
                                 window.mittEmitter.emit(message.body.centerName, message.body.data)
 							} else if(message.body.type == 'applicationWarningTextMessage') {
                                 directMessageToProperAlert(message.body)
+                            } else if(message.body.type == 'applicationModalTextMessage') {
+                                directMessageToModalText(message.body)
                             } else if(message.body.type == 'refreshPage') {
 								window.location.reload()
 							} else {
@@ -236,6 +259,14 @@ function registerAKHomeAutomationOnEventBus(initializeKey) {
             }
         }
     )
+}
+
+function directMessageToModalText(responseData) {
+	var title = responseData.title || '---'
+	var message = (responseData.message ? responseData.message : responseData.data) || '---'
+	$("#showTextModal").modal('show');
+	$("#showTextModalTitle").html(title);
+	$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + message + '</textarea>');
 }
 
 function directMessageToProperAlert(responseData) {

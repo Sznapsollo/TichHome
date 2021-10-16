@@ -256,6 +256,10 @@ class Server extends AbstractVerticle {
 						result.data = checkDelayData(incomingData)
 						result.message = 'ok'
 						break;
+					case 'checkRFSniffer': 
+						result.data = checkRFSniffer()						
+						result.message = 'ok'
+						break;
 					case 'checkTichSessions': 
 						result.data = checkTichSessions()						
 						result.message = 'ok'
@@ -317,6 +321,33 @@ class Server extends AbstractVerticle {
 		});
 	}
 	
+	private def checkRFSniffer() {
+		if(!settingsService.rfSnifferPath) {
+			throw new Exception((("rf.sniffer.path not setup").toString()))
+		}
+		def returnData = ("Processing: ${settingsService.rfSnifferPath}") as String
+
+		// NJ those can take some time and we do not want to stop main loop so lets process it and then get back to UI via eventbus
+		Thread worker = new Thread() {
+			public void run() {
+				try {
+					def shellCommand = "${settingsService.rfSnifferPath}"
+					def shellResult = helperService.runShellCommand(shellCommand.split(' '), false)
+					localLogger "got ${settingsService.rfSnifferPath} results ${shellResult}"
+					pushEventBusMessage([path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationModalTextMessage_checkRFSniffer', type: 'applicationModalTextMessage', status: 'OK', title: 'RF Sniffer', data: shellResult?.toString() ?: '']])
+				} catch(Exception exception) {
+					pushEventBusMessage([path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationExceptionMessage_checkRFSniffer', type: 'applicationWarningTextMessage', status: 'FAIL', data: exception?.toString() ?: '']])
+					exception.printStackTrace();
+				}
+			}
+		};
+
+		worker.start();
+		// worker.join();
+
+		return returnData
+	}
+
 	private def checkTichSessions() {
 		def returnData = []
 		registeredHandles?.each { key, value ->
