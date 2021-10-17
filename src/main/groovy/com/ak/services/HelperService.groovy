@@ -97,6 +97,7 @@ class HelperService {
 		def url = args.url
 		def data = args.data
 		def method = args.method ?: 'GET'
+		def noWait = args.noWait == true
 		// def command = [
 		// 	"curl",
 		// 	"-X",
@@ -128,15 +129,27 @@ class HelperService {
 			(url.toString())
 		]
 
+		if(noWait) {
+			return runShellCommandNoWait(command)
+		}
+
 		return runShellCommand(command)	
 	}
 
 	def runShellCommandNoWait(def command) {
-		def pb = new ProcessBuilder(command)
-        localLogger "runShellCommandNoWait - executing: ${command.join(' ')}"
-        pb.redirectErrorStream(true)
-        
-        Process process = pb.start()
+		try {
+			def pb = new ProcessBuilder(command)
+			localLogger "runShellCommandNoWait - executing: ${command.join(' ')}"
+			pb.redirectErrorStream(true)
+			
+			Process process = pb.start()
+		}
+		catch(Exception e) {
+			localLogger "runShellCommandNoWait exception"
+			localLogger e.toString()
+			localLogger e.printStackTrace()
+			return ''
+		}
 	}
 	def runShellCommand(def command, def mustSucceed = true) {
 		try {

@@ -115,7 +115,6 @@ class SignalSenderService {
 					if(shouldLogToggleAction) {
 						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource: 'Group', remoteAddress: remoteAddress])
 					}
-					Thread.sleep(1000);
 				}
 			}
 			else if(itemToProcess instanceof ItemCheckerService.IntItem) {
@@ -148,7 +147,6 @@ class SignalSenderService {
 					if(shouldLogToggleAction) {
 						logToggleAction([outletLight:code, outletDelayed:outletDelayed, outletStatus:outletStatus, outletSource: 'Group', remoteAddress: remoteAddress])
 					}
-					Thread.sleep(1000);
 				}
 			}
 			else if(itemToProcess instanceof ItemCheckerService.IntItem) {
@@ -251,7 +249,7 @@ class SignalSenderService {
 	def turnComputerOn(def macaddress)
 	{
 		vertxReference.executeBlocking({ promise ->
-			runShellCommand(toString("${sudo}wakeonlan ${macaddress}"), false);		
+			runShellCommand(toString("${sudo}wakeonlan ${macaddress}"));		
 			promise.complete([OK: true])
 		}, { res ->
 			localLogger ("turnComputerOn - The result is: ${res.result()}")
@@ -290,13 +288,18 @@ class SignalSenderService {
 				outletSource: webServerAddress
 			]
 
-			satelliteServerAddresses.each { satelliteServerAddressItem ->
+			try {
+				satelliteServerAddresses.each { satelliteServerAddressItem ->
 				if(webServerAddress == satelliteServerAddressItem) {
 					localLogger 'Same address as satellite. returning to avoid loop ...'
 					return
 				}
 				def serverAddress = toString("${satelliteServerAddressItem}actions")
-				def page = helperService.getWebPageContent([url: serverAddress, method: 'POST', data: (new JsonObject(data)).toString()]);	
+				def page = helperService.getWebPageContent([noWait: true, url: serverAddress, method: 'POST', data: (new JsonObject(data)).toString()]);	
+			}
+			} catch(Exception exception) {
+				localLogger "Problem when performing satellites notification for item ${item}"
+				exception.printStackTrace();
 			}
 		}
 	}
@@ -461,7 +464,7 @@ class SignalSenderService {
 		
 		helperService.runShellCommandNoWait(command.split(' '))
 	}
-	def runShellCommand(def command, def sleep = true)
+	def runShellCommand(def command)
 	{
 		// shell_exec($command);
 		localLogger '-------------------------------------------------------------'
@@ -478,9 +481,6 @@ class SignalSenderService {
 
 		def result = helperService.runShellCommand(command.split(' '))
 
-		if(sleep) {
-			Thread.sleep(1000);
-		}
 		return result
 	}
 	

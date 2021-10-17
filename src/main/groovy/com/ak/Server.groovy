@@ -53,6 +53,7 @@ class Server extends AbstractVerticle {
 
 	def router
 	private Map scheduledUpdates = [:]
+	private def tichHomeVersion = "202110172100"
 
 	private def registeredHandles = [:]
 
@@ -140,7 +141,7 @@ class Server extends AbstractVerticle {
 		try{
             // Create new file
 			def appName = settingsService.serverRootPath
-			def fileContent = "var appName=\"${appName}\""
+			def fileContent = "var appName=\"${appName}\";var tichHomeVersion=\"${tichHomeVersion}\";"
             
             String path="${settingsService.wwwPath}/inc/js/scriptsVars.js";
             File file = new File(path);
