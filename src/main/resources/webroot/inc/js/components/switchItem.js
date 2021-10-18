@@ -13,22 +13,22 @@ app.component('switch-item', {
 			<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 				<i class="fa fa-close"></i>
 			</button>
-			<span v-if="hotword != null" class="hotword">
-				{{translate('itemHotWord')}}: {{hotword}}
-			</span>
-			<span class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
-				<span v-if="itemAvailability == null">{{translate('availability_not_checked')}}</span>
-				<span v-if="itemAvailability" style="color:green">{{translate('availability_available')}}</span>
-				<span v-if="itemAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
-			</span>
 			<div class="numberPicker" v-if="delay">
 				<input v-if="showTimer" type="number" v-model="delayValue" v-on:change="changeTimer(delayValue)" min="{{minSliderValue}}" max="{{maxSliderValue}}"  class="form-control" data-min="0" />
 				<hours-and-minutes v-on:click="toggleSliderOptions()" class="timerNormal" v-if="!showTimer" v-bind:delayValue="delayValue"></hours-and-minutes>
 			</div>
 		</div>
-		<div class="itemRegularActionsRandomData" v-if="regularActionRandomStart != null && regularActionRandomEnd != null && regularActionRandomStart.length && regularActionRandomEnd.length">
+		<span class="itemRegularActionsRandomData" v-if="regularActionRandomStart != null && regularActionRandomEnd != null && regularActionRandomStart.length && regularActionRandomEnd.length">
 			{{translate('itemRandom')}}: {{regularActionRandomStart}} - {{regularActionRandomEnd}}
-		</div>
+		</span>
+		<span v-if="hotword != null" class="hotword">
+			{{translate('itemHotWord')}}: {{hotword}}
+		</span>
+		<span class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
+			<span v-if="itemAvailability == null">{{translate('availability_not_checked')}}</span>
+			<span v-if="itemAvailability" style="color:green">{{translate('availability_available')}}</span>
+			<span v-if="itemAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
+		</span>
 		<div v-if="relatedItems && relatedItems.length" class="relatedItems">
 			{{relatedItems ? relatedItems.join(', ') : ''}}
 		</div>
