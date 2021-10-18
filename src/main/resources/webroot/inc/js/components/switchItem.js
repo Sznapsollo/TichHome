@@ -13,6 +13,9 @@ app.component('switch-item', {
 			<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 				<i class="fa fa-close"></i>
 			</button>
+			<span v-if="hotword != null" class="hotword">
+				{{translate('itemHotWord')}}: {{hotword}}
+			</span>
 			<span class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
 				<span v-if="itemAvailability == null">{{translate('availability_not_checked')}}</span>
 				<span v-if="itemAvailability" style="color:green">{{translate('availability_available')}}</span>
@@ -86,6 +89,7 @@ app.component('switch-item', {
 		const questionOff = Vue.ref(item.questionOff);
 		const regularActions = Vue.ref(item.regularActions);
 		const relatedItems = Vue.ref(item.relatedItems);
+		const hotword = Vue.ref(item.hotword);
 		const canCheckAvailabitylyIp = Vue.ref(item.canCheckAvailabitylyIp)
 		const regularActionRandomStart = Vue.ref(item.regularActionRandomStart)
 		const regularActionRandomEnd = Vue.ref(item.regularActionRandomEnd)
@@ -511,6 +515,7 @@ app.component('switch-item', {
 			delayValue,
 			disableDate,
 			header,
+			hotword,
 			enableOn,
 			enableOff,
 			icon,

@@ -144,9 +144,11 @@
 	font-weight: 700; color: red;
 }
 
-.itemAvailability {
+span.hotword,
+span.itemAvailability {
 	cursor: pointer;
 	font-size: 8pt;
+	padding-left: 15px;
 }
 
 .itemRegularActionsRandomData {
