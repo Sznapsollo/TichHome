@@ -18,7 +18,9 @@
     background-color: #218838;
     border-color: #1e7e34;
 }
-
+.powerswitchbuttons {
+	clear: both;
+}
 .powerswitchbuttons .btn-disable {
 	border: 1px solid #cccccc;
 	background-color: #efefef;
@@ -144,15 +146,32 @@
 	font-weight: 700; color: red;
 }
 
-span.itemAvailability {
+.itemAvailability {
 	cursor: pointer;
 }
 
-span.itemAvailability,
-span.hotword,
-span.itemRegularActionsRandomData {
+/* .relatedItems, */
+.itemAvailability,
+.hotword,
+.itemRegularActionsRandomData {
 	font-size: 8pt;
-	padding-right: 15px;
+    padding-left: 15px;
+    float: right;
+    margin-top: -15px;
+}
+
+@media screen and (max-width: 1000px) {
+	/* .relatedItems, */
+	.itemAvailability,
+	.hotword,
+	.itemRegularActionsRandomData {
+		font-size: 8pt;
+		padding-right: 5px;
+		padding-left: 0px;
+		float: none;
+		margin-top: 0px;
+		display: inline-block;
+	}
 }
 
 .sensorswitch,
