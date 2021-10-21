@@ -18,19 +18,19 @@ app.component('switch-item', {
 				<hours-and-minutes v-on:click="toggleSliderOptions()" class="timerNormal" v-if="!showTimer" v-bind:delayValue="delayValue"></hours-and-minutes>
 			</div>
 		</div>
-		<span class="itemRegularActionsRandomData" v-if="regularActionRandomStart != null && regularActionRandomEnd != null && regularActionRandomStart.length && regularActionRandomEnd.length">
+		<div v-if="relatedItems && relatedItems.length" class="relatedItems">
+			{{relatedItems ? relatedItems.join(', ') : ''}}
+		</div>
+		<div class="itemRegularActionsRandomData" v-if="regularActionRandomStart != null && regularActionRandomEnd != null && regularActionRandomStart.length && regularActionRandomEnd.length">
 			{{translate('itemRandom')}}: {{regularActionRandomStart}} - {{regularActionRandomEnd}}
-		</span>
-		<span v-if="hotword != null" class="hotword">
+		</div>
+		<div v-if="hotword != null" class="hotword">
 			{{translate('itemHotWord')}}: {{hotword}}
-		</span>
-		<span class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
+		</div>
+		<div class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
 			<span v-if="itemAvailability == null">{{translate('availability_not_checked')}}</span>
 			<span v-if="itemAvailability" style="color:green">{{translate('availability_available')}}</span>
 			<span v-if="itemAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
-		</span>
-		<div v-if="relatedItems && relatedItems.length" class="relatedItems">
-			{{relatedItems ? relatedItems.join(', ') : ''}}
 		</div>
 		<div v-bind:class="{'sub-section': showRegular || showTimer}">
 

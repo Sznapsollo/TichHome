@@ -53,7 +53,7 @@ class Server extends AbstractVerticle {
 
 	def router
 	private Map scheduledUpdates = [:]
-	private def tichHomeVersion = "202110172100"
+	private def tichHomeVersion = "202110212100"
 
 	private def registeredHandles = [:]
 
@@ -258,7 +258,7 @@ class Server extends AbstractVerticle {
 						result.message = 'ok'
 						break;
 					case 'checkRFSniffer': 
-						result.data = checkRFSniffer()						
+						result.data = checkRFSniffer(incomingData)						
 						result.message = 'ok'
 						break;
 					case 'checkTichSessions': 
@@ -301,7 +301,7 @@ class Server extends AbstractVerticle {
 					errMsg = (("${errMsg} -- ${stackTrace}").toString())
 					localLogger errMsg
 				} 
-				writeExceptionToFile(result.message, errMsg)
+				writeExceptionToFile(incomingData, result.message, errMsg)
 			}
 
 			if(!result.message) {
@@ -322,7 +322,7 @@ class Server extends AbstractVerticle {
 		});
 	}
 	
-	private def checkRFSniffer() {
+	private def checkRFSniffer(def incomingData) {
 		if(!settingsService.rfSnifferPath) {
 			throw new Exception((("rf.sniffer.path not setup").toString()))
 		}
@@ -335,9 +335,9 @@ class Server extends AbstractVerticle {
 					def shellCommand = "${settingsService.rfSnifferPath}"
 					def shellResult = helperService.runShellCommand(shellCommand.split(' '), false)
 					localLogger "got ${settingsService.rfSnifferPath} results ${shellResult}"
-					pushEventBusMessage([path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationModalTextMessage_checkRFSniffer', type: 'applicationModalTextMessage', status: 'OK', title: 'RF Sniffer', data: shellResult?.toString() ?: '']])
+					pushEventBusMessage([sessionId: incomingData?.sessionId, path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationModalTextMessage_checkRFSniffer', type: 'applicationModalTextMessage', status: 'OK', title: 'RF Sniffer', data: shellResult?.toString() ?: '']])
 				} catch(Exception exception) {
-					pushEventBusMessage([path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationExceptionMessage_checkRFSniffer', type: 'applicationWarningTextMessage', status: 'FAIL', data: exception?.toString() ?: '']])
+					pushEventBusMessage([sessionId: incomingData?.sessionId, path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationExceptionMessage_checkRFSniffer', type: 'applicationWarningTextMessage', status: 'FAIL', data: exception?.toString() ?: '']])
 					exception.printStackTrace();
 				}
 			}
@@ -1090,18 +1090,18 @@ class Server extends AbstractVerticle {
 		return returnData
 	}
 
-	private void sendApplicationExceptionMessage(def exception) {
+	private void sendApplicationExceptionMessage(def incomingData, def exception) {
 		try {
-			pushEventBusMessage([path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationExceptionMessage', type: 'applicationWarningTextMessage', status: 'FAIL', data: exception?.toString() ?: '']])
+			pushEventBusMessage([sessionId: incomingData?.sessionId, path: "applicationMessage/", type: 'warning', message: [name: 'sendApplicationExceptionMessage', type: 'applicationWarningTextMessage', status: 'FAIL', data: exception?.toString() ?: '']])
 		} catch(Exception e) {
 			localLogger 'sendApplicationExceptionMessage Exception !!!'
 			localLogger e
 		}
 	}
 
-	private void writeExceptionToFile(def exceptionShort, def exceptionLong) {
+	private void writeExceptionToFile(def incomingData, def exceptionShort, def exceptionLong) {
 		try {
-			sendApplicationExceptionMessage(exceptionShort)
+			sendApplicationExceptionMessage(incomingData, exceptionShort)
 			def currentExcData = "${dateFormat2.format(new Date())}:${exceptionShort?.toString() ?: ''}${exceptionLong?.toString() ?: ''}"
 			def fileName = "exceptions_${getMinuteKey(new Date(), 'YMD')}.log"
 			def filePath = (("${settingsService.logsFolderPath}exceptions/${fileName}").toString())
@@ -1153,7 +1153,7 @@ class Server extends AbstractVerticle {
 			}
 
 			if(bodyObject.registeringPage == true) {
-				def sessionId = bodyObject.sessionId
+				def sessionId = bodyObject.sessionData?.sessionId
 				def initializeKey = bodyObject.initializeKey
 				if(!initializeKey) {
 					localLogger 'No Initialize Key!!!'
@@ -1237,6 +1237,7 @@ class Server extends AbstractVerticle {
 	private void pushEventBusMessage(def args = [:]) {
 		def path = args.path 
 		def message = args.message
+		def sessionId = args.sessionId
 
 		// localLogger "pushEventBusMessage ${path}" 
 		// localLogger "pushEventBusMessage ${path} ${message}" 
@@ -1245,6 +1246,10 @@ class Server extends AbstractVerticle {
 		def notificationKey = "${path}${message.name}"		
 		def sendToEventBus = { messageToBeSent ->
 			registeredHandles.each { sessionIdKey, sessionIdValue ->
+
+				if(sessionId && sessionId != sessionIdKey) {
+					return
+				}
 
 				def eventBusMessage = new JsonObject(messageToBeSent.message)
 

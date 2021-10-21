@@ -1,3 +1,4 @@
+var userSessionData
 $(document).ready(function()
 {
 	initializeEventBus()
@@ -92,7 +93,7 @@ function produceUserIdentifier() {
 }
 
 function checkRFSniffer() {
-    var data = {type: 'checkRFSniffer'}
+    var data = {type: 'checkRFSniffer', sessionId: userSessionData.sessionId}
     data = JSON.stringify(data)
 	axios.post(('/' + appName + '/actions'), data)
 		.then(function (dataResponse) {
@@ -205,7 +206,8 @@ function initializeEventBus() {
 }
 
 function registerAKHomeAutomationOnEventBus(initializeKey) {
-    globalEventBus.send('register/', {registeringPage: true, initializeKey: initializeKey, sessionId: getSessionId()},
+	userSessionData = getSessionData()
+    globalEventBus.send('register/', {registeringPage: true, initializeKey: initializeKey, sessionData: userSessionData},
         function (responseObj, message) {
             if(message && message.body && message.body.status && message.body.handle) {
                 localLogger("Event bus registration: " + message.body.status, 1)
@@ -379,17 +381,36 @@ function GetLocalStorage(index, defaultValue) {
 	}
 }
 
-
-function getSessionId() {
+function getSessionData() {
     var cookieName = 'akHomeAutmationSession'
-    var currentSession = getCookie(cookieName)
 
-    if(!currentSession || currentSession == '') {
-        currentSession = makeid(15)
-        setCookie(cookieName, currentSession, 1)
+    try {
+        var currentSessionData = getCookie(cookieName)
+        var currentSessionDataParsed
+        if(!currentSessionData) {
+            currentSessionDataParsed = {}
+        } else {
+			try {
+				currentSessionDataParsed = JSON.parse(unescape(atob(currentSessionData)))
+			} catch(e) {
+				console.warn('Invalid session. Making new one.')
+				currentSessionDataParsed = {}
+			}
+        }
+
+        if(!currentSessionDataParsed) {
+            currentSessionDataParsed = {}
+        }
+        if(!currentSessionDataParsed.sessionId) {
+            currentSessionDataParsed.sessionId = makeid(15)
+        }
+    } catch(e) {
+        directMessageToProperAlert({status: 'FAIL', message: 'Something wen wroong on registry ...'})
     }
+    
+    setCookie(cookieName, btoa(escape(JSON.stringify(currentSessionDataParsed))), 1)
 
-    return currentSession
+    return currentSessionDataParsed
 }
 
 function makeid(length) {
