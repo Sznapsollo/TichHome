@@ -120,9 +120,10 @@ function activeTichSessions() {
 		.then(function (dataResponse) {
 			if(dataResponse && dataResponse.data && dataResponse.data.message == 'ok') {
 				var amount = dataResponse.data.data ? dataResponse.data.data.length : 0
-				$("#showTextModal").modal('show');
-				$("#showTextModalTitle").html("sessions " + "(" + amount + ")");
-				$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>');
+				window.mittEmitter.emit('showResultsModal', {
+					title: "sessions " + "(" + amount + ")", 
+					content: '<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>'
+				});
 			} else {
 				var errMsgParts = ['activeTichSessions ']
 				if(dataResponse && dataResponse.data) {
@@ -144,9 +145,10 @@ function getTichSessionsHistory() {
 		.then(function (dataResponse) {
 			if(dataResponse && dataResponse.data && dataResponse.data.message == 'ok') {
 				var amount = dataResponse.data.data ? dataResponse.data.data.length : 0
-				$("#showTextModal").modal('show');
-				$("#showTextModalTitle").html(automation.translate('sessionsHistory') + "(" + amount + ")");
-				$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>');
+				window.mittEmitter.emit('showResultsModal', {
+					title: automation.translate('sessionsHistory') + "(" + amount + ")", 
+					content: '<textarea class="form-control" rows="20">' + JSON.stringify(dataResponse.data.data, null, 4) + '</textarea>'
+				});
 			} else {
 				var errMsgParts = ['getTichSessionsHistory ']
 				if(dataResponse && dataResponse.data) {
@@ -266,9 +268,10 @@ function registerAKHomeAutomationOnEventBus(initializeKey) {
 function directMessageToModalText(responseData) {
 	var title = responseData.title || '---'
 	var message = (responseData.message ? responseData.message : responseData.data) || '---'
-	$("#showTextModal").modal('show');
-	$("#showTextModalTitle").html(title);
-	$("#showTextModal .modal-body .modal-text").html('<textarea class="form-control" rows="20">' + message + '</textarea>');
+	window.mittEmitter.emit('showResultsModal', {
+		title: title, 
+		content: '<textarea class="form-control" rows="20">' + message + '</textarea>'
+	});
 }
 
 function directMessageToProperAlert(responseData) {

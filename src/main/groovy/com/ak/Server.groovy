@@ -53,7 +53,7 @@ class Server extends AbstractVerticle {
 
 	def router
 	private Map scheduledUpdates = [:]
-	private def tichHomeVersion = "202110212100"
+	private def tichHomeVersion = "202110302000"
 
 	private def registeredHandles = [:]
 
