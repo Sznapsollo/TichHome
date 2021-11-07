@@ -14,7 +14,6 @@ app.component('switch-item', {
 				<i class="fa fa-close"></i>
 			</button>
 			<div class="numberPicker" v-if="delay">
-				<input v-if="showTimer" type="number" v-model="delayValue" v-on:change="changeTimer(delayValue)" min="{{minSliderValue}}" max="{{maxSliderValue}}"  class="form-control" data-min="0" />
 				<hours-and-minutes v-on:click="toggleSliderOptions()" class="timerNormal" v-if="!showTimer" v-bind:delayValue="delayValue"></hours-and-minutes>
 			</div>
 		</div>
@@ -36,7 +35,7 @@ app.component('switch-item', {
 
 			<regular-settings v-if="showRegular" v-bind:outletId="outletId" v-bind:regularActionData="regularActionData" v-on:onSaveRegularSettings="saveRegularSettings" v-bind:randomEnabled="true" ></regular-settings>
 
-			<hours-and-minutes class="timerChoice" v-if="showTimer" v-bind:calculatedTime="calculatedTime" v-bind:showDate="true" v-bind:delayValue="delayValue" v-on:onDelayedDisableClicked="delayedDisableClicked"></hours-and-minutes>
+			<hours-and-minutes class="timerChoice" v-if="showTimer" v-bind:calculatedTime="calculatedTime" v-bind:showDate="true" v-bind:delayValue="delayValue" v-on:onDelayedDisableClicked="delayedDisableClicked" v-bind:minSliderValue="minSliderValue" v-bind:maxSliderValue="maxSliderValue" v-on:onChangeMinutes="changeTimer"></hours-and-minutes>
 			<div v-if="showTimer" class="input-group">
 				<span class="input-group-btn">
 					<button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="changeValue(-1)">
@@ -46,7 +45,7 @@ app.component('switch-item', {
 				<span class="input-group-btn">
 					&nbsp;
 				</span>
-				<input type="range" min="{{minSliderValue}}" max="{{maxSliderValue}}" v-model="delayValue" v-on:-change="changeTimer(delayValue)" class="form-range form-control formRangeSlider" style="float: left;" />
+				<input type="range" min="{{minSliderValue}}" max="{{maxSliderValue}}" v-model="delayValue" v-on:change="changeTimer(delayValue)" class="form-range form-control formRangeSlider" style="float: left;" />
 				<span class="input-group-btn">
 					&nbsp;
 				</span>
