@@ -63,6 +63,7 @@ app.component('log-details', {
 				return text
 			}
 			return text.replaceAll('status=on','status=<span class="logEnabledStatus">on</span>')
+			.replaceAll('status=offd','status=<span class="logDisabledStatus">off delayed</span>')
 			.replaceAll('status=off','status=<span class="logDisabledStatus">off</span>')
 			.replaceAll('status=','<span class="logLowDetail">status=</span>')
 			.replaceAll('source=','<span class="logLowDetail">source=</span>')
