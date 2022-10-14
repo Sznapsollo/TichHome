@@ -1,1 +1,1 @@
-var appName="tichhome";var tichHomeVersion="202110172100";
+var appName="tichhome";var tichHomeVersion="202210142200";
