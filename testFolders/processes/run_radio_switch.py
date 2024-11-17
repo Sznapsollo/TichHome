@@ -39,7 +39,7 @@ try:
 					time.sleep(0.2)
 	else:
 		call([namearg,codearg])
-except Exception, e:
+except Exception as e:
 	message = "[run_radio_switch] node " + namearg + " " + codearg + " exc " + str(e)
 	helper.writeExceptionToFile(message)
 	helper.logMessage(message)
@@ -47,3 +47,5 @@ except Exception, e:
 except OSError:
 	helper.writeExceptionToFile("[run_radio_switch]  Error on delayed_action for  ");
 	pass
+
+

@@ -7,4 +7,5 @@ scriptarg, ip = argv
 
 if __name__ == "__main__":
 
-	print os.system('ping '+ip+' -w 1')
+	print(os.system('ping '+ip+' -w 1'))
+

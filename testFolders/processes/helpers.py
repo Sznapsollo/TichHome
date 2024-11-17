@@ -9,11 +9,11 @@ import sys
 import time
 import traceback
 import threading
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 from socket import timeout
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 class Settings(object):
 
@@ -144,13 +144,14 @@ class Helper(object):
 				# data = urllib.urlencode(post)
 				# urllib2.urlopen(url,data)
 
-				req = urllib2.Request(url)
+				req = urllib.request.Request(url)
 				req.add_header('Content-Type', 'application/json')
-				urllib2.urlopen(req, json.dumps(post))
+				postData = json.dumps(post).encode("utf-8")
+				urllib.request.urlopen(req, postData)
 			else:
 				self.logDetailedMessage('loadPageWithPost url: ' + url)
-				urllib2.urlopen(url)
-		except urllib2.URLError as e:
+				urllib.request.urlopen(url)
+		except urllib.error.URLError as e:
 			if hasattr(e, 'reason'):
 				self.logDetailedMessage('Failed to reach server')
 				self.logDetailedMessage('Reason: ' + str(e.reason))
@@ -187,7 +188,7 @@ class Helper(object):
 
 	def logMessageWithDate(self, message):
 		timestamp = time.strftime('[%Y-%m-%d %H:%M:%S]: ')
-		print (timestamp+message+"\n")
+		print((timestamp+message+"\n"))
 
 	def runDeviceAction(self, requestProperties):
 		self.runDeviceActionInner(self.settings.data["web.server.address"], requestProperties)
@@ -306,4 +307,5 @@ class ProcessKill(object):
 				
 				pid = int(line.split(None, 2)[1])
 				os.kill(pid,signal.SIGKILL)
+
 

@@ -345,3 +345,4 @@ if __name__ == "__main__":
 		helper.writeExceptionToFile(message)
 		helper.logMessage(message)
 		pass
+
