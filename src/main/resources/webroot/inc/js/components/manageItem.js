@@ -3,10 +3,10 @@ app.component('manage-item', {
 	template: `	
 	<div class="powerswitch" v-bind:class="{'turnedOff': !enabled && id}">
 		<i v-if="icon" :class="icon"></i>
-		<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':true}" v-on:click="openItemFormModal()" v-bind:src="'graphics/icons/' + image" />
+		<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':true}" v-on:click="openItemFormModal()" :key="$theme.resolved + image" v-bind:src="itemIconSrc(image)" v-on:error="onItemIconError($event, image)" />
 		<span v-if="id" class="switchHeader" v-bind:class="{'switchHeaderClickable':true}" v-on:click="openItemFormModal()">{{header}}</span>
 		<span v-if="!id" class="switchHeader" v-bind:class="{'switchHeaderClickable':true}" v-on:click="openItemFormModal()">{{translate('itemAddNewItem')}}</span>
-		<img v-if="id" class="switchCalendarIcon" v-on:click="openItemFormModal()" v-bind:src="'graphics/' + settingIconName" />
+		<img v-if="id" class="switchCalendarIcon" v-on:click="openItemFormModal()" v-bind:src="graphicSrc(settingIconName)" />
 		<div style="display: none">{{refresher}}</div>
 	</div>
 	`,

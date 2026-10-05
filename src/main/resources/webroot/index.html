@@ -13,12 +13,13 @@
 	<meta name="keywords" content="TichHome,Sznapsollo,home automation" />
 	<meta name="homepage" content="https://github.com/Sznapsollo/TichHome">
   
+	<script type="text/javascript" src="inc/js/theme.js"></script>
 	<script type="text/javascript" src="inc/js/libraries/sockjs.min.js"></script>
 	<script type="text/javascript" src='inc/js/libraries/vertx-eventbus.js'></script>
 
 	<script type="text/javascript" src="inc/js/libraries/moment.min.js"></script>
-	<script type="text/javascript" src="inc/js/libraries/vue_3.0.2.global.prod.js"></script>
-	<script type="text/javascript" src="inc/js/libraries/vue-router.global_4_0_8.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/vue_3.5.43.global.prod.js"></script>
+	<script type="text/javascript" src="inc/js/libraries/vue-router.global_4_6_4.js"></script>
 	<script type="text/javascript" src="inc/js/libraries/axios.min.js"></script>
 	<script type="text/javascript" src="inc/js/libraries/mitt.umd.js"></script>
 	<script type="text/javascript" src="inc/js/libraries/jquery-3.3.1.min.js"></script>
@@ -81,6 +82,18 @@
 						<li class="nav-item" v-bind:class="{ active: $route.name=='logList' && $route.params.logType == 'exceptions' }">
 							<router-link v-bind:class="{'redBlinker': showCheckExcLog}" :to="{ name: 'logList', params: {logType: 'exceptions', startIndex: 0, itemsPerPage: itemsPerPage} }" class="nav-link" >{{translate('logs_exceptions')}}</router-link>
 						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" :title="themeLabel(themeMode)">
+								<i class="fa" :class="themeIcon(themeMode)"></i>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+								<li v-for="mode in themeModes">
+									<a class="dropdown-item" href="#" v-bind:class="{ active: themeMode == mode }" v-on:click.prevent="setThemeMode(mode)">
+										<i class="fa fa-fw" :class="themeIcon(mode)"></i> {{themeLabel(mode)}}
+									</a>
+								</li>
+							</ul>
+						</li>
 					</ul>
 					<span v-if="showCheckLog" class="navbar-text redBlinker">
 						Check Log
@@ -138,7 +151,7 @@
 
 		<results-modal></results-modal>
 		
-		<div style="text-align: right;color: #999999;font-size: 8px;padding: 5px;">v: {{versionTichHome}}</div>
+		<div class="versionInfo">v: {{versionTichHome}}</div>
 		<div style="display: none">{{refresher}}</div>
 	</div>
 

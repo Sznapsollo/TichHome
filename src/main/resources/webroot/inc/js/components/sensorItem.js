@@ -3,19 +3,19 @@ app.component('sensor-item', {
 	template: `		
 	<div class="sensorswitch">
 		<span class="switchHeader">{{header}}</span>
-		<img class="switchCalendarIcon" v-on:click="toggleRegularOptions()" v-bind:src="'graphics/' + calendarIconName" />
+		<img class="switchCalendarIcon" v-on:click="toggleRegularOptions()" v-bind:src="graphicSrc(calendarIconName)" />
 		<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 			<i class="fa fa-close"></i>
 		</button>
-		<img class="switchCalendarIcon" v-on:click="toggleDevicesOptions()" v-bind:src="'graphics/' + actionIconName" />
+		<img class="switchCalendarIcon" v-on:click="toggleDevicesOptions()" v-bind:src="graphicSrc(actionIconName)" />
 		<button v-if="showDevices" v-on:click="toggleDevicesOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 			<i class="fa fa-close"></i>
 		</button>
-		<img v-if="canChangeAlarmSettings" class="switchCalendarIcon" v-on:click="toggleAlarmsTimeUnits()" v-bind:src="'graphics/' + alarmTimeUnitsIconName" />
+		<img v-if="canChangeAlarmSettings" class="switchCalendarIcon" v-on:click="toggleAlarmsTimeUnits()" v-bind:src="graphicSrc(alarmTimeUnitsIconName)" />
 		<button v-if="showAlarmTimeUnits" v-on:click="toggleAlarmsTimeUnits()" type="button" class="btn btn-sm closeSubSectionButton" >
 			<i class="fa fa-close"></i>
 		</button>
-		<img v-if="canChangeAlarmSettings" class="switchCalendarIcon" v-on:click="toggleAlarmsDevices()" v-bind:src="'graphics/' + alarmDevicesIconName" />
+		<img v-if="canChangeAlarmSettings" class="switchCalendarIcon" v-on:click="toggleAlarmsDevices()" v-bind:src="graphicSrc(alarmDevicesIconName)" />
 		<button v-if="showAlarmDevices" v-on:click="toggleAlarmsDevices()" type="button" class="btn btn-sm closeSubSectionButton" >
 			<i class="fa fa-close"></i>
 		</button>

@@ -4,12 +4,12 @@ app.component('switch-item', {
 	<div v-if="isEnabled">
 		<div class="powerswitch">
 			<i v-if="icon" :class="icon"></i>
-			<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':delay}" v-on:click="toggleSliderOptions()" v-bind:src="'graphics/icons/' + image" />
+			<img v-if="image" class="switchIcon" v-bind:class="{'switchIconClickable':delay}" v-on:click="toggleSliderOptions()" :key="$theme.resolved + image" v-bind:src="itemIconSrc(image)" v-on:error="onItemIconError($event, image)" />
 			<span class="switchHeader" v-bind:class="{'switchHeaderClickable':delay}" v-on:click="toggleSliderOptions()">{{header}}</span>
 			<button v-if="showTimer" v-on:click="toggleSliderOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 				<i class="fa fa-close"></i>
 			</button>
-			<img v-if="boolValue(regularActions)" class="switchCalendarIcon" v-on:click="toggleRegularOptions()" v-bind:src="'graphics/' + calendarIconName" />
+			<img v-if="boolValue(regularActions)" class="switchCalendarIcon" v-on:click="toggleRegularOptions()" v-bind:src="graphicSrc(calendarIconName)" />
 			<button v-if="showRegular" v-on:click="toggleRegularOptions()" type="button" class="btn btn-sm closeSubSectionButton" >
 				<i class="fa fa-close"></i>
 			</button>
@@ -28,8 +28,8 @@ app.component('switch-item', {
 		</div>
 		<div class="itemAvailability" v-if="boolValue(canCheckAvailabitylyIp)" v-on:click="checkItemAvailability()">
 			<span v-if="itemAvailability == null">{{translate('availability_not_checked')}}</span>
-			<span v-if="itemAvailability" style="color:green">{{translate('availability_available')}}</span>
-			<span v-if="itemAvailability == false" style="color:red">{{translate('availability_unavailable')}}</span>
+			<span v-if="itemAvailability" class="textSuccess">{{translate('availability_available')}}</span>
+			<span v-if="itemAvailability == false" class="textDanger">{{translate('availability_unavailable')}}</span>
 		</div>
 		<div v-bind:class="{'sub-section': showRegular || showTimer}">
 

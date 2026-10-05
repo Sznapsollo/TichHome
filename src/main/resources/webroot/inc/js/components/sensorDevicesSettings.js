@@ -4,7 +4,7 @@ app.component('sensor-devices-settings', {
 	<h5>{{translate('alarm_devices_trigger')}}</h5>
 	<div v-for="onDevice in onDevices" class="settingsSection" >
 		<div style="display: inline-block; margin-right: 15px;">
-			<button type="button" class="btn btn-default" style="color: red;" aria-label="Left Align" v-on:click="removeDevice(onDevice)" >
+			<button type="button" class="btn btn-default textDanger" aria-label="Left Align" v-on:click="removeDevice(onDevice)" >
 				<i class="fa fa-times"></i>
 			</button>
 		</div>

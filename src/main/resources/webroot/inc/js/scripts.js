@@ -472,19 +472,19 @@ var automation = function() {
 		
 		switch(name) {
 			case "calendar":
-				return "calendar_icon"+value+".jpg";
+				return "calendar_icon"+value+".png";
 				break;
 			case "action":
-				return "actions_icon"+value+".jpg";
+				return "actions_icon"+value+".png";
 				break;
 			case "alarmTimeUnits":
-				return "alarm_time_units_icon"+value+".jpg";
+				return "alarm_time_units_icon"+value+".png";
 				break;
 			case "alarmDevices":
-				return "alarm_devices_icon"+value+".jpg";
+				return "alarm_devices_icon"+value+".png";
 				break;
 			case "setting":
-				return "settings_icon"+value+".jpg";
+				return "settings_icon"+value+".png";
 				break;
 			default:
 				return "";

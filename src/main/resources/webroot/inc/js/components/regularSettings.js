@@ -11,7 +11,7 @@ app.component('regular-settings', {
 				</div>
 			</div>
 			<div class="form-inline" style="margin: 10px auto 10px auto; text-align: center; margin-top: 10px;">
-				<button type="button" class="btn btn-default" style="margin-right: 10px; color: red;" aria-label="Left Align" v-on:click="removeUnit(timeUnit)" v-if="timeUnits.length > 1">
+				<button type="button" class="btn btn-default textDanger" style="margin-right: 10px;" aria-label="Left Align" v-on:click="removeUnit(timeUnit)" v-if="timeUnits.length > 1">
 					<i class="fa fa-times"></i>
 				</button>
 				<span v-if="!timeUnit.timeStart || !timeUnit.timeStart.length" v-on:click="timeUnit.timeStart='12:00'">{{translate('no_value')}}</span><input type="time" v-if="timeUnit.timeStart && timeUnit.timeStart.length" v-model="timeUnit.timeStart" name="time_start" class="timeInputField">&nbsp-&nbsp<span v-if="!timeUnit.timeEnd || !timeUnit.timeEnd.length" v-on:click="timeUnit.timeEnd='12:00'">{{translate('no_value')}}</span><input v-if="timeUnit.timeEnd && timeUnit.timeEnd.length" type="time" v-model="timeUnit.timeEnd" name="time_end" class="timeInputField">
